@@ -1,0 +1,153 @@
+<UserControl x:Class="TheCup_Presentation.Views.GroupsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="500"
+             d:DesignWidth="700">
+
+
+    <Grid Margin="32,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <TextBlock Style="{StaticResource SectionTitle}"
+                       Text="{StaticResource Groups_Title}" />
+            <TextBlock Style="{StaticResource SectionSubtitle}"
+                       Text="{StaticResource Groups_Subtitle}" />
+            <TextBlock Margin="0,8,0,0"
+                       Foreground="{StaticResource Brush.AccentPrimary}"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Text="{Binding TournamentName}" />
+            <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                <TextBlock Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="12"
+                           Text="{StaticResource Tournament_StatusLabel}" />
+                <TextBlock Margin="6,0,0,0"
+                           Foreground="{StaticResource Brush.AccentPrimary}"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Text="{Binding StatusDisplay}" />
+            </StackPanel>
+            <TextBlock Margin="0,4,0,0"
+                       Foreground="{StaticResource Brush.TextSecondary}"
+                       FontSize="12"
+                       Text="{Binding StatusMessage}" />
+        </StackPanel>
+
+        <Border Grid.Row="1"
+                Margin="0,24,0,16"
+                Style="{StaticResource TournamentCardBorder}"
+                Padding="16"
+                Visibility="{Binding ShowStartSection, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel>
+                <TextBlock Style="{StaticResource SectionTitle}"
+                           FontSize="18"
+                           Text="{StaticResource Groups_StartTitle}" />
+                <TextBlock Margin="0,6,0,16"
+                           Style="{StaticResource SectionSubtitle}"
+                           Text="{Binding ActivationHint}" />
+                <Button HorizontalAlignment="Left"
+                        Style="{StaticResource PrimaryButton}"
+                        Content="{StaticResource Tournament_Activate}"
+                        Command="{Binding StartTournamentCommand}" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2"
+                Margin="0,0,0,16"
+                Style="{StaticResource TournamentCardBorder}"
+                Padding="16"
+                Visibility="{Binding ShowGeneratorSection, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel>
+                <TextBlock Style="{StaticResource SectionTitle}"
+                           FontSize="18"
+                           Text="{StaticResource Groups_GeneratorTitle}" />
+                <TextBlock Margin="0,6,0,16"
+                           Style="{StaticResource SectionSubtitle}"
+                           Text="{StaticResource Groups_GeneratorMessage}" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                        <TextBlock Style="{StaticResource FieldLabel}"
+                                   Text="{StaticResource Groups_GroupCountLabel}" />
+                        <TextBox Style="{StaticResource DarkTextBox}"
+                                 Text="{Binding GroupCount, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                        <TextBlock Style="{StaticResource FieldLabel}"
+                                   Text="{StaticResource Groups_TeamsPerGroupLabel}" />
+                        <TextBox Style="{StaticResource DarkTextBox}"
+                                 Text="{Binding TeamsPerGroup, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Style="{StaticResource FieldLabel}"
+                                   Text="{StaticResource Groups_MinTeamsLabel}" />
+                        <TextBox Style="{StaticResource DarkTextBox}"
+                                 Text="{Binding MinTeamsPerGroup, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Margin="0,20,0,0"
+                            Orientation="Horizontal">
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="{StaticResource Groups_GenerateDraw}"
+                            Command="{Binding GenerateGroupsCommand}" />
+                    <Button Margin="12,0,0,0"
+                            Style="{StaticResource SecondaryButton}"
+                            Content="{StaticResource Groups_Refresh}"
+                            Command="{Binding RefreshCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Groups}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource TournamentCardBorder}">
+                            <StackPanel>
+                                <Grid>
+                                    <TextBlock Text="{Binding Name}"
+                                               Foreground="{StaticResource Brush.AccentPrimary}"
+                                               FontSize="18"
+                                               FontWeight="SemiBold" />
+                                    <TextBlock HorizontalAlignment="Right"
+                                               Foreground="{StaticResource Brush.TextSecondary}"
+                                               FontSize="12"
+                                               Text="{Binding TeamCountDisplay}" />
+                                </Grid>
+                                <ItemsControl Margin="0,12,0,0"
+                                              ItemsSource="{Binding TeamNames}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="0,0,0,6"
+                                                       Foreground="{StaticResource Brush.TextPrimary}"
+                                                       FontSize="14"
+                                                       Text="{Binding StringFormat='• {0}', Mode=OneWay}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

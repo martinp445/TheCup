@@ -1,0 +1,292 @@
+---
+description: TheCup is WPF .NET 10 MVVM application for sports tournament management with layered architecture and custom ICommand
+alwaysApply: true
+---
+
+# Project Overview
+
+This is a desktop WPF application built with .NET 10 using MVVM and layered architecture.
+
+The application is used for organizing sports tournaments:
+- team registration
+- match scheduling
+- draws (randomization)
+- group stage management
+- playoff bracket generation
+
+Primary focus:
+- team sports (football/soccer, hockey, floorball)
+- strongest emphasis on football tournaments
+
+---
+
+# Product Vision & Purpose
+
+## Purpose
+- Provide a simple tool to organize sports tournaments efficiently
+- Replace manual spreadsheets or chaotic workflows
+- Allow fast creation of tournaments, matches, and brackets
+
+## Target Users
+- organizers of amateur or semi-professional tournaments
+- non-technical users
+- people who need quick, reliable setup of tournaments
+
+## UX / Vibe
+
+The application should feel:
+
+- Structured and organized (like a tournament bracket)
+- Fast and responsive
+- Practical and productivity-focused
+- Sport-oriented (especially football mindset)
+
+Design should reflect:
+- clarity over complexity
+- efficiency over visual effects
+
+Avoid:
+- overengineered UI
+- unnecessary animations
+- hidden or “magic” behavior
+
+Prefer:
+- explicit flows
+- predictable screens
+- visible tournament structure (groups, matches, brackets)
+
+---
+
+# Core Domain Concepts
+
+The system revolves around:
+
+- Team
+- Match
+- Group (group stage / pools)
+- Tournament
+- Round / Stage (group stage, knockout stage)
+- Bracket (playoff tree)
+
+Domain logic should include:
+- match creation rules
+- scheduling rules
+- progression logic (group -> playoff)
+- score results and standings
+
+---
+
+# Architecture (Layered)
+
+The solution is structured into layers:
+
+- Presentation (WPF UI)
+- Application (use cases)
+- Domain (core business logic)
+- Infrastructure (data access only json, external services)
+
+## Rules
+
+- Domain MUST NOT reference:
+  - WPF or UI types
+  - Infrastructure concerns (DB, file system, HTTP)
+- Application:
+  - uses Domain
+  - defines interfaces (ports)
+  - does NOT use UI types
+- Infrastructure:
+  - implements interfaces from Application
+  - contains EF Core, file IO, APIs
+- Presentation:
+  - uses Application services
+  - contains Views and ViewModels only
+
+When crossing boundaries:
+- introduce interface (port) in Application
+- implement it in Infrastructure
+
+---
+
+# MVVM Rules (WPF)
+
+## Views
+- no business logic
+- code-behind allowed only for:
+  - UI concerns (focus, visual state, animation)
+- bind everything through ViewModel
+
+## ViewModels
+- expose bindable properties
+- expose commands via ICommand
+- call Application services (never Infrastructure directly)
+- do NOT reference View types
+
+## Domain
+- contains business rules
+- contains entities and value objects
+- no UI logic
+- no INotifyPropertyChanged
+
+---
+
+# Commands (Custom ICommand)
+
+We use a custom ICommand implementation.
+
+## Strict rules
+
+- DO NOT use:
+  - RelayCommand (Toolkit)
+  - DelegateCommand
+  - any external MVVM frameworks
+
+## Command definition
+
+- Commands MUST be created once (constructor)
+- MUST NOT be instantiated in property getters
+
+Correct pattern:
+- public ICommand SaveCommand { get; }
+- initialized in constructor
+
+## CanExecute rules
+
+- CanExecute MUST reflect:
+  - IsBusy
+  - selection state
+  - validation state
+
+- When state changes:
+  - trigger CanExecute re-evaluation
+
+Preferred approach:
+- use internal method (e.g., RaiseCanExecuteChanged())
+
+Alternative:
+- use CommandManager.InvalidateRequerySuggested() (UI thread)
+
+## Async rules
+
+- IO operations must be async
+- never block UI thread (.Result / .Wait forbidden)
+- ViewModel handles errors and state
+
+---
+
+# Dependency Injection
+
+- Composition root is in Presentation (App startup)
+- Use constructor injection everywhere
+- No service locator
+
+---
+
+# Application Layer
+
+Application layer defines:
+- use cases
+- orchestration logic
+
+Patterns:
+- services (e.g., ITournamentService)
+- query/command handlers
+
+Responsibilities:
+- coordinate Domain logic
+- call repositories (via interfaces)
+
+---
+
+# Infrastructure Layer
+
+Contains:
+- database (EF Core or other)
+- persistence
+- external integration
+
+Rules:
+- implements interfaces from Application
+- must not leak DB-specific code to other layers
+
+---
+
+# ViewModel UX State
+
+Each ViewModel should expose:
+
+- IsBusy
+- ErrorMessage (string or structured error)
+- optionally notifications
+
+Behavior:
+- commands update IsBusy
+- errors must be visible to UI
+
+---
+
+# Tournament-Specific Behavior Rules
+
+When generating code:
+
+- respect tournament flow:
+  - teams -> groups -> matches -> standings -> playoffs
+- scheduling must be predictable
+- bracket logic must be deterministic
+- group standings must be consistent (points, goals, etc.)
+
+Prefer:
+- clear models over clever abstractions
+- explicit structures (Group, Match, Bracket)
+
+---
+
+# WPF-specific Performance
+
+- use ObservableCollection for lists
+- prefer OneWay binding when possible
+- avoid heavy logic in property setters
+- UI thread logic stays in Presentation only
+
+---
+
+# Coding Style
+
+- use nullable reference types
+- no magic strings for bindings
+- small, readable methods
+- prefer explicit names
+
+---
+
+# Decision Rules (IMPORTANT)
+
+When unsure:
+
+- prefer simpler solution
+- avoid unnecessary abstractions
+- follow existing architecture strictly
+- do not introduce frameworks
+
+For UI:
+- prefer clarity over visual complexity
+
+For domain:
+- correctness over convenience
+
+---
+
+# Output Rules for AI
+
+When generating code:
+
+- always specify layer (Presentation / Application / Domain / Infrastructure)
+- do not violate architecture boundaries
+- use the custom ICommand pattern
+- keep MVVM separation strict
+- ensure code aligns with tournament domain
+
+If unsure about placement:
+- domain logic → Domain
+- orchestration → Application
+- IO / DB → Infrastructure
+- UI binding → Presentation

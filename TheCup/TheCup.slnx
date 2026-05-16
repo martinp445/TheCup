@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="TheCup-Application/TheCup_Application.csproj" />
+  <Project Path="TheCup-Domain/TheCup_Domain.csproj" />
+  <Project Path="TheCup-Infrastructure/TheCup_Infrastructure.csproj" />
+  <Project Path="TheCup/TheCup_Presentation.csproj" />
+</Solution>

@@ -1,0 +1,48 @@
+<UserControl x:Class="TheCup_Presentation.Views.CreateTournamentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="500"
+             d:DesignWidth="700">
+
+    <Grid Margin="32,24">
+        <Border MaxWidth="520"
+                HorizontalAlignment="Left"
+                Style="{StaticResource TournamentCardBorder}"
+                Padding="24">
+            <StackPanel>
+                <TextBlock Style="{StaticResource SectionTitle}"
+                           Text="{StaticResource Create_Title}" />
+                <TextBlock Style="{StaticResource SectionSubtitle}"
+                           Text="{StaticResource Create_Subtitle}" />
+
+                <TextBlock Margin="0,24,0,0"
+                           Style="{StaticResource FieldLabel}"
+                           Text="{StaticResource Create_NameLabel}" />
+                <TextBox Style="{StaticResource DarkTextBox}"
+                         Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Margin="0,16,0,0"
+                           Style="{StaticResource FieldLabel}"
+                           Text="{StaticResource Create_SportLabel}" />
+                <ComboBox Style="{StaticResource DarkComboBox}"
+                          ItemsSource="{Binding SportOptions}"
+                          SelectedItem="{Binding SelectedSport}"
+                          DisplayMemberPath="DisplayName" />
+
+                <StackPanel Margin="0,28,0,0"
+                            Orientation="Horizontal">
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="{StaticResource Create_Create}"
+                            Command="{Binding CreateCommand}" />
+                    <Button Style="{StaticResource SecondaryButton}"
+                            Margin="12,0,0,0"
+                            Content="{StaticResource Create_Cancel}"
+                            Command="{Binding CancelCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

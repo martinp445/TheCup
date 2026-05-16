@@ -1,0 +1,74 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Localization-ready keys; default English. Add Resources.cs.resx for Czech later. -->
+    <system:String x:Key="App_Title">TheCup</system:String>
+    <system:String x:Key="Nav_Overview">Overview</system:String>
+    <system:String x:Key="Nav_Teams">Teams</system:String>
+    <system:String x:Key="Nav_Pitches">Pitches</system:String>
+    <system:String x:Key="Nav_Groups">Groups</system:String>
+    <system:String x:Key="Nav_Matches">Matches</system:String>
+    <system:String x:Key="Nav_Playoffs">Playoffs</system:String>
+    <system:String x:Key="Nav_DisabledTooltip">Available after a tournament is created</system:String>
+    <system:String x:Key="Nav_DisabledGroupsTooltip">Confirm teams on the Teams page to unlock Groups</system:String>
+
+    <system:String x:Key="Home_Title">Tournaments</system:String>
+    <system:String x:Key="Home_Subtitle">Create and manage your sports tournaments</system:String>
+    <system:String x:Key="Home_NewTournament">New tournament</system:String>
+    <system:String x:Key="Home_EmptyTitle">No tournaments yet</system:String>
+    <system:String x:Key="Home_EmptyMessage">Start by creating your first tournament. You can add teams, run the group draw, schedule matches, and build playoffs.</system:String>
+    <system:String x:Key="Home_Refresh">Refresh</system:String>
+    <system:String x:Key="Home_OpenTournament">Open</system:String>
+    <system:String x:Key="Home_DeleteTournament">Delete</system:String>
+
+    <system:String x:Key="Create_Title">New tournament</system:String>
+    <system:String x:Key="Create_Subtitle">Set the tournament name and sport</system:String>
+    <system:String x:Key="Create_NameLabel">Tournament name</system:String>
+    <system:String x:Key="Create_SportLabel">Sport</system:String>
+    <system:String x:Key="Create_Create">Create tournament</system:String>
+    <system:String x:Key="Create_Cancel">Cancel</system:String>
+
+    <system:String x:Key="Teams_Title">Teams</system:String>
+    <system:String x:Key="Teams_Subtitle">Add teams and rename them anytime during the tournament</system:String>
+    <system:String x:Key="Teams_NewTeamLabel">Team name</system:String>
+    <system:String x:Key="Teams_AddTeam">Add team</system:String>
+    <system:String x:Key="Teams_Rename">Save name</system:String>
+    <system:String x:Key="Teams_Remove">Remove</system:String>
+    <system:String x:Key="Teams_EmptyTitle">No teams yet</system:String>
+    <system:String x:Key="Teams_EmptyMessage">Add teams that will participate in this tournament. You can rename a team later if needed.</system:String>
+    <system:String x:Key="Teams_Refresh">Refresh</system:String>
+    <system:String x:Key="Teams_ConfirmTeams">Confirm teams</system:String>
+    <system:String x:Key="Teams_EditTeams">Edit teams</system:String>
+    <system:String x:Key="Teams_ConfirmedTitle">Teams confirmed</system:String>
+    <system:String x:Key="Teams_ConfirmedMessage">Groups is now available in the menu. Set up pitches, then open Groups to start the tournament and run the draw.</system:String>
+
+    <system:String x:Key="Pitches_Title">Pitches</system:String>
+    <system:String x:Key="Pitches_Subtitle">Add pitches where matches can be played. Each tournament needs at least one.</system:String>
+    <system:String x:Key="Pitches_MinimumHint">At least one pitch is required. The last pitch cannot be removed.</system:String>
+    <system:String x:Key="Pitches_NewPitchLabel">Pitch name</system:String>
+    <system:String x:Key="Pitches_AddPitch">Add pitch</system:String>
+    <system:String x:Key="Pitches_Rename">Save name</system:String>
+    <system:String x:Key="Pitches_Remove">Remove</system:String>
+    <system:String x:Key="Pitches_Refresh">Refresh</system:String>
+
+    <system:String x:Key="Groups_Title">Groups</system:String>
+    <system:String x:Key="Groups_Subtitle">Start the tournament, then generate the group stage draw</system:String>
+    <system:String x:Key="Groups_StartTitle">Start tournament</system:String>
+    <system:String x:Key="Groups_StartMessage">Confirm teams first, ensure at least one pitch is set, then start the tournament to run the group draw.</system:String>
+    <system:String x:Key="Groups_StartTournament">Activate tournament</system:String>
+    <system:String x:Key="Tournament_Activate">Activate tournament</system:String>
+    <system:String x:Key="Tournament_ActivateTitle">Activate tournament</system:String>
+    <system:String x:Key="Tournament_StatusLabel">Status</system:String>
+    <system:String x:Key="Tournament_ActiveBanner">Tournament is active</system:String>
+    <system:String x:Key="Groups_GeneratorTitle">Group draw</system:String>
+    <system:String x:Key="Groups_GeneratorMessage">Set the number of groups, target teams per group, and minimum when teams cannot be split evenly. Teams are assigned randomly.</system:String>
+    <system:String x:Key="Groups_GroupCountLabel">Number of groups</system:String>
+    <system:String x:Key="Groups_TeamsPerGroupLabel">Teams per group</system:String>
+    <system:String x:Key="Groups_MinTeamsLabel">Minimum teams per group</system:String>
+    <system:String x:Key="Groups_GenerateDraw">Generate groups</system:String>
+    <system:String x:Key="Groups_Refresh">Refresh</system:String>
+
+    <system:String x:Key="Header_ActiveTournament">Active tournament</system:String>
+
+</ResourceDictionary>
