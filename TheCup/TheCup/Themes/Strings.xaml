@@ -3,7 +3,7 @@
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <!-- Localization-ready keys; default English. Add Resources.cs.resx for Czech later. -->
-    <system:String x:Key="App_Title">TheCup</system:String>
+    <system:String x:Key="App_Title">The Cup</system:String>
     <system:String x:Key="Nav_Overview">Overview</system:String>
     <system:String x:Key="Nav_Teams">Teams</system:String>
     <system:String x:Key="Nav_Pitches">Pitches</system:String>

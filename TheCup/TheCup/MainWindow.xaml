@@ -69,11 +69,6 @@
                         </TextBlock.Style>
                     </TextBlock>
                 </StackPanel>
-
-                <Button Grid.Column="2"
-                        Style="{StaticResource PrimaryButton}"
-                        Content="{StaticResource Home_NewTournament}"
-                        Command="{Binding Home.NewTournamentCommand}" />
             </Grid>
         </Border>
 
