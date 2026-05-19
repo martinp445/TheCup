@@ -22,31 +22,50 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
-            <TextBlock Style="{StaticResource SectionTitle}"
-                       Text="{StaticResource Teams_Title}" />
-            <TextBlock Style="{StaticResource SectionSubtitle}"
-                       Text="{StaticResource Teams_Subtitle}" />
-            <TextBlock Margin="0,8,0,0"
-                       Foreground="{StaticResource Brush.AccentPrimary}"
-                       FontSize="16"
-                       FontWeight="SemiBold"
-                       Text="{Binding TournamentName}" />
-            <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
-                <TextBlock Foreground="{StaticResource Brush.TextSecondary}"
-                           FontSize="12"
-                           Text="{StaticResource Tournament_StatusLabel}" />
-                <TextBlock Margin="6,0,0,0"
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Style="{StaticResource SectionTitle}"
+                           Text="{StaticResource Teams_Title}" />
+                <TextBlock Style="{StaticResource SectionSubtitle}"
+                           Text="{StaticResource Teams_Subtitle}" />
+                <TextBlock Margin="0,8,0,0"
                            Foreground="{StaticResource Brush.AccentPrimary}"
-                           FontSize="12"
+                           FontSize="16"
                            FontWeight="SemiBold"
-                           Text="{Binding StatusDisplay}" />
+                           Text="{Binding TournamentName}" />
+                <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                    <TextBlock Foreground="{StaticResource Brush.TextSecondary}"
+                               FontSize="12"
+                               Text="{StaticResource Tournament_StatusLabel}" />
+                    <TextBlock Margin="6,0,0,0"
+                               Foreground="{StaticResource Brush.AccentPrimary}"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Text="{Binding StatusDisplay}" />
+                </StackPanel>
+                <TextBlock Margin="0,4,0,0"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="12"
+                           Text="{Binding InfoMessage}" />
             </StackPanel>
-            <TextBlock Margin="0,4,0,0"
-                       Foreground="{StaticResource Brush.TextSecondary}"
-                       FontSize="12"
-                       Text="{Binding InfoMessage}" />
-        </StackPanel>
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Top">
+                <Button HorizontalAlignment="Left"
+                        Style="{StaticResource PrimaryButton}"
+                        Margin="0,0,12,0"
+                        Content="{StaticResource Teams_ConfirmTeams}"
+                        Command="{Binding ConfirmTeamsCommand}" />
+                
+                <Button Style="{StaticResource SecondaryButton}"
+                        Content="{StaticResource Teams_Refresh}"
+                        Command="{Binding RefreshCommand}" />
+            </StackPanel>
+        </Grid>
 
         <Border Grid.Row="1"
                 Margin="0,24,0,16"
@@ -74,17 +93,10 @@
                             Content="{StaticResource Teams_AddTeam}"
                             Command="{Binding AddTeamCommand}" />
 
-                    <Button Grid.Column="2"
-                            Style="{StaticResource SecondaryButton}"
-                            Content="{StaticResource Teams_Refresh}"
-                            Command="{Binding RefreshCommand}" />
+                    
                 </Grid>
 
-                <Button Margin="0,20,0,0"
-                        HorizontalAlignment="Left"
-                        Style="{StaticResource PrimaryButton}"
-                        Content="{StaticResource Teams_ConfirmTeams}"
-                        Command="{Binding ConfirmTeamsCommand}" />
+                
             </StackPanel>
         </Border>
 

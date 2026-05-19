@@ -16,31 +16,46 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
-            <TextBlock Style="{StaticResource SectionTitle}"
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Style="{StaticResource SectionTitle}"
                        Text="{StaticResource Groups_Title}" />
-            <TextBlock Style="{StaticResource SectionSubtitle}"
+                <TextBlock Style="{StaticResource SectionSubtitle}"
                        Text="{StaticResource Groups_Subtitle}" />
-            <TextBlock Margin="0,8,0,0"
+                <TextBlock Margin="0,8,0,0"
                        Foreground="{StaticResource Brush.AccentPrimary}"
                        FontSize="16"
                        FontWeight="SemiBold"
                        Text="{Binding TournamentName}" />
-            <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
-                <TextBlock Foreground="{StaticResource Brush.TextSecondary}"
+                <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                    <TextBlock Foreground="{StaticResource Brush.TextSecondary}"
                            FontSize="12"
                            Text="{StaticResource Tournament_StatusLabel}" />
-                <TextBlock Margin="6,0,0,0"
+                    <TextBlock Margin="6,0,0,0"
                            Foreground="{StaticResource Brush.AccentPrimary}"
                            FontSize="12"
                            FontWeight="SemiBold"
                            Text="{Binding StatusDisplay}" />
-            </StackPanel>
-            <TextBlock Margin="0,4,0,0"
+                </StackPanel>
+                <TextBlock Margin="0,4,0,0"
                        Foreground="{StaticResource Brush.TextSecondary}"
                        FontSize="12"
                        Text="{Binding StatusMessage}" />
-        </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Top">
+                <Button HorizontalAlignment="Left"
+                        Style="{StaticResource PrimaryButton}"
+                        Margin="0,0,12,0"
+                        Content="{StaticResource Groups_Schedule}"
+                        Command="{Binding ScheduleCommand}" />
+            </StackPanel>
+        </Grid>
 
         <Border Grid.Row="1"
                 Margin="0,24,0,16"

@@ -125,12 +125,6 @@
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="16" />
         <Setter Property="Margin" Value="0,0,0,12" />
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="BorderBrush" Value="{StaticResource Brush.AccentPrimary}" />
-                <Setter Property="Effect" Value="{StaticResource Effect.AccentGlow}" />
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
     <Style x:Key="StatusBadge" TargetType="Border">

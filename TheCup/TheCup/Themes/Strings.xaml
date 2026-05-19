@@ -66,8 +66,9 @@
     <system:String x:Key="Groups_GroupCountLabel">Number of groups</system:String>
     <system:String x:Key="Groups_TeamsPerGroupLabel">Teams per group</system:String>
     <system:String x:Key="Groups_MinTeamsLabel">Minimum teams per group</system:String>
-    <system:String x:Key="Groups_GenerateDraw">Generate groups</system:String>
+    <system:String x:Key="Groups_GenerateDraw">Shuffle</system:String>
     <system:String x:Key="Groups_Refresh">Refresh</system:String>
+    <system:String x:Key="Groups_Schedule">Schedule</system:String>
 
     <system:String x:Key="Header_ActiveTournament">Active tournament</system:String>
 

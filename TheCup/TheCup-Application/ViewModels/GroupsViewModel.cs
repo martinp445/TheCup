@@ -38,6 +38,10 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
             () => _ = GenerateGroupsAsync(),
             () => !IsBusy && CanGenerateGroups);
 
+        ScheduleCommand = new ActionCommand(
+            () => _ = ScheduleAsync(),
+            () => !IsBusy && CanSchedule);
+
         RefreshCommand = new ActionCommand(
             () => _ = LoadAsync(),
             () => !IsBusy && _tournamentId != Guid.Empty);
@@ -140,6 +144,8 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         IsActive && _teamCount >= 1 && GroupCount >= 1 && TeamsPerGroup >= MinTeamsPerGroup
         && MinTeamsPerGroup >= 1 && !IsBusy;
 
+    public bool CanSchedule => IsActive && HasGroups;
+
     public bool ShowStartSection => IsDraft;
 
     public bool ShowGeneratorSection => IsActive;
@@ -147,6 +153,8 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
     public ICommand StartTournamentCommand { get; }
 
     public ICommand GenerateGroupsCommand { get; }
+
+    public ICommand ScheduleCommand { get; }
 
     public ICommand RefreshCommand { get; }
 
@@ -230,6 +238,29 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         }
     }
 
+    private async Task ScheduleAsync()
+    {
+        if (IsBusy || _tournamentId == Guid.Empty || !CanSchedule)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+
+            // TODO schedule tournament
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     private async Task LoadGroupsAsync()
     {
         if (_tournamentId == Guid.Empty)
@@ -276,6 +307,7 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         OnPropertyChanged(nameof(IsActive));
         OnPropertyChanged(nameof(CanStartTournament));
         OnPropertyChanged(nameof(CanGenerateGroups));
+        OnPropertyChanged(nameof(CanSchedule));
         OnPropertyChanged(nameof(ShowStartSection));
         OnPropertyChanged(nameof(ShowGeneratorSection));
         RaiseCommandStates();
@@ -290,6 +322,8 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         }
 
         HasGroups = groups.Count > 0;
+
+        RaiseScheduleCanExecute();
     }
 
     private void RaiseGenerateCanExecute()
@@ -312,10 +346,20 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         }
 
         RaiseGenerateCanExecute();
+        RaiseScheduleCanExecute();
 
         if (RefreshCommand is ActionCommand refresh)
         {
             refresh.RaiseCanExecuteChanged();
+        }
+    }
+
+    private void RaiseScheduleCanExecute()
+    {
+        OnPropertyChanged(nameof(CanSchedule));
+        if (ScheduleCommand is ActionCommand schedule)
+        {
+            schedule.RaiseCanExecuteChanged();
         }
     }
 }
