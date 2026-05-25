@@ -42,18 +42,9 @@
                FontSize="12"
                Text="{Binding StatusMessage}" />
             </StackPanel>
-            <!--<StackPanel Grid.Column="1"
-                Orientation="Horizontal"
-                VerticalAlignment="Top">
-                <Button HorizontalAlignment="Left"
-                Style="{StaticResource PrimaryButton}"
-                Margin="0,0,12,0"
-                Content="{StaticResource Groups_Schedule}"
-                Command="{Binding ScheduleCommand}" />
-            </StackPanel>-->
         </Grid>
 
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Games}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -64,22 +55,22 @@
                                        Foreground="{StaticResource Brush.AccentPrimary}"
                                        FontSize="18"
                                        FontWeight="SemiBold" />
-                                    <!--<TextBlock HorizontalAlignment="Right"
-                                       Foreground="{StaticResource Brush.TextSecondary}"
-                                       FontSize="12"
-                                       Text="{Binding TeamCountDisplay}" />-->
                                 </Grid>
-                                <!--<ItemsControl Margin="0,12,0,0"
-                                      ItemsSource="{Binding TeamNames}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Margin="0,0,0,6"
-                                               Foreground="{StaticResource Brush.TextPrimary}"
-                                               FontSize="14"
-                                               Text="{Binding StringFormat='• {0}', Mode=OneWay}" />
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>-->
+                                <StackPanel Margin="0,12,0,0"
+                                            Orientation="Horizontal">
+                                    <TextBlock
+                                        Foreground="{StaticResource Brush.TextPrimary}"
+                                        FontSize="12"
+                                        Text="{Binding PitchName}" />
+                                    <TextBlock Margin="8,0,0,0"
+                                        Foreground="{StaticResource Brush.TextPrimary}"
+                                        FontSize="14"
+                                        Text="{Binding HomeTeamName}" />
+                                    <TextBlock Margin="6,0,0,0"
+                                        Foreground="{StaticResource Brush.TextPrimary}"
+                                        FontSize="14"
+                                        Text="{Binding AwayTeamName}" />
+                                </StackPanel>
                             </StackPanel>
                         </Border>
                     </DataTemplate>

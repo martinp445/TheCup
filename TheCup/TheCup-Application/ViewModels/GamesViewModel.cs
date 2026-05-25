@@ -57,15 +57,17 @@ namespace TheCup_Application.ViewModels
             ApplySummary(summary);
             // await load schedule or something
 
-            //GameSummary test1 = new GameSummary
-            //{
-            //    Id = new Guid(),
-            //    Name = "game 1",
-            //    TeamNames = ("t1", "t2")
-            //};
+            GameSummary test1 = new GameSummary
+            {
+                Id = new Guid(),
+                Name = "game 1",
+                PitchName = "pitch 1",
+                HomeTeamName = "home team",
+                AwayTeamName = "away team"
+            };
 
-            //Games.Add(test1);
-            //OnPropertyChanged(nameof(Games));
+            Games.Add(test1);
+            OnPropertyChanged(nameof(Games));
         }
 
         private void ApplySummary(TournamentSummary summary)
