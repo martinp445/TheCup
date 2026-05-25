@@ -12,6 +12,7 @@ public sealed class MainWindowViewModel : ViewModel
     private const int NavTeams = 1;
     private const int NavPitches = 2;
     private const int NavGroups = 3;
+    private const int NavMatches = 4;
 
     private readonly ITournamentRepository _repository;
     private ViewModel? _currentContent;
@@ -37,6 +38,7 @@ public sealed class MainWindowViewModel : ViewModel
         Teams = new TeamsViewModel(repository);
         Pitches = new PitchesViewModel(repository);
         Groups = new GroupsViewModel(repository);
+        Games = new GamesViewModel(repository);
 
         Home.NewTournamentRequested += ShowCreateTournament;
         Home.OpenTournamentRequested += summary => _ = ShowTeamsAsync(summary);
@@ -63,6 +65,8 @@ public sealed class MainWindowViewModel : ViewModel
     public PitchesViewModel Pitches { get; }
 
     public GroupsViewModel Groups { get; }
+
+    public GamesViewModel Games { get; }
 
     public ViewModel? CurrentContent
     {
@@ -93,6 +97,7 @@ public sealed class MainWindowViewModel : ViewModel
             {
                 OnPropertyChanged(nameof(IsTournamentNavEnabled));
                 OnPropertyChanged(nameof(IsGroupsNavEnabled));
+                OnPropertyChanged(nameof(IsGamesNavEnabled));
             }
         }
     }
@@ -110,6 +115,9 @@ public sealed class MainWindowViewModel : ViewModel
     public bool IsTournamentNavEnabled => HasActiveTournament;
 
     public bool IsGroupsNavEnabled =>
+        HasActiveTournament && _activeTournamentStatus == TournamentStatus.Active;
+
+    public bool IsGamesNavEnabled =>
         HasActiveTournament && _activeTournamentStatus == TournamentStatus.Active;
 
     public int SelectedNavIndex
@@ -201,6 +209,26 @@ public sealed class MainWindowViewModel : ViewModel
         }
     }
 
+    public async Task ShowGamesAsync(TournamentSummary summary)
+    {
+        SetActiveTournament(summary);
+        SetCurrentContent(Games);
+        SetNavIndexSilently(NavMatches);
+        await Games.LoadAsync(summary.Id).ConfigureAwait(true);
+    }
+
+    public async Task ShowGamesAsync()
+    {
+        if (_activeTournamentId is  Guid tournamentId)
+        {
+            var summary = await _repository.GetByIdAsync(tournamentId).ConfigureAwait(true);
+            if (summary is not null)
+            {
+                await ShowGamesAsync(summary).ConfigureAwait(true);
+            }
+        }
+    }
+
     private async Task OnTournamentCreatedAsync(TournamentSummary summary)
     {
         await Home.LoadAsync().ConfigureAwait(true);
@@ -243,6 +271,7 @@ public sealed class MainWindowViewModel : ViewModel
         _teamsConfirmed = summary.TeamsConfirmed;
         HasActiveTournament = true;
         OnPropertyChanged(nameof(IsGroupsNavEnabled));
+        OnPropertyChanged(nameof(IsGamesNavEnabled));
     }
 
     private void OnTeamsConfirmationChanged(TournamentSummary summary)
@@ -286,6 +315,9 @@ public sealed class MainWindowViewModel : ViewModel
             case NavGroups when IsGroupsNavEnabled:
                 _ = ShowGroupsAsync();
                 break;
+            case NavMatches when IsGamesNavEnabled:
+                _ = ShowGamesAsync();
+                break;
             default:
                 SetNavIndexSilently(GetNavIndexForContent(CurrentContent));
                 break;
@@ -297,6 +329,7 @@ public sealed class MainWindowViewModel : ViewModel
         TeamsViewModel => NavTeams,
         PitchesViewModel => NavPitches,
         GroupsViewModel => NavGroups,
+        GamesViewModel => NavMatches,
         _ => NavOverview
     };
 

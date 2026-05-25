@@ -94,7 +94,7 @@
                                  IsEnabled="{Binding IsGroupsNavEnabled}"
                                  ToolTip="{StaticResource Nav_DisabledGroupsTooltip}" />
                     <ListBoxItem Content="{StaticResource Nav_Matches}"
-                                 IsEnabled="False"
+                                 IsEnabled="{Binding IsGamesNavEnabled}"
                                  ToolTip="{StaticResource Nav_DisabledTooltip}" />
                     <ListBoxItem Content="{StaticResource Nav_Playoffs}"
                                  IsEnabled="False"

@@ -23,5 +23,7 @@ public class Tournament
 
     public List<Group> Groups { get; } = [];
 
+    public List<Game> Schedule { get; } = [];
+
     public GroupStageSettings? GroupStageSettings { get; set; }
 }
