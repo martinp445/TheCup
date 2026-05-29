@@ -42,5 +42,7 @@ public interface ITournamentRepository
         int minTeamsPerGroup,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<GameSummary>> GenerateScheduleAsync(Guid tournamentId, CancellationToken cancellationToken = default);
+
     Task DeleteAsync(Guid tournamentId, CancellationToken cancellationToken = default);
 }

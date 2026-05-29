@@ -327,6 +327,30 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         return Task.FromResult(ToGroupSummaries(tournament));
     }
 
+    public Task<IReadOnlyList<GameSummary>> GenerateScheduleAsync(Guid tournamentId, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var tournament = FindTournament(tournamentId)
+            ?? throw new InvalidOperationException("Tournament was not found.");
+        if (tournament.Status != TournamentStatus.Active)
+        {
+            throw new InvalidOperationException("Start the tournament before generating the schedule.");
+        }
+        if (tournament.Groups.Count == 0)
+        {
+            throw new InvalidOperationException("Generate groups before generating the schedule.");
+        }
+        var games = GameScheduler.GenerateSchedule(tournament);
+
+        // make it better
+        foreach (var game in games)
+        {
+            tournament.Schedule.Add(game);
+        }
+
+        return Task.FromResult(ToGameSummaries(tournament));
+    }
+
     public Task DeleteAsync(Guid tournamentId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -376,6 +400,22 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
                 TeamNames = group.TeamIds
                     .Select(id => teamNames.TryGetValue(id, out var name) ? name : "Unknown team")
                     .ToList()
+            })
+            .ToList();
+    }
+
+    private static IReadOnlyList<GameSummary> ToGameSummaries(Tournament tournament)
+    {
+        var teamNames = tournament.Teams.ToDictionary(t => t.Id, t => t.Name);
+        var pitchNames = tournament.Pitches.ToDictionary(p => p.Id, p => p.Name);
+        return tournament.Schedule
+            .Select(game => new GameSummary
+            {
+                Id = game.Id,
+                Name = game.Name,
+                PitchName = pitchNames.TryGetValue(game.PitchId, out var pitchName) ? pitchName : "Unknown pitch",
+                HomeTeamName = teamNames.TryGetValue(game.Teams.Item1, out var homeTeamName) ? homeTeamName : "Unknown team",
+                AwayTeamName = teamNames.TryGetValue(game.Teams.Item2, out var awayTeamName) ? awayTeamName : "Unknown team"
             })
             .ToList();
     }

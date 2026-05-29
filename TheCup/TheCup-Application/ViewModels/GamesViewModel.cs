@@ -55,18 +55,14 @@ namespace TheCup_Application.ViewModels
             }
 
             ApplySummary(summary);
-            // await load schedule or something
+            var games = await _repository.GenerateScheduleAsync(tournamentId).ConfigureAwait(true);
 
-            GameSummary test1 = new GameSummary
+            Games.Clear();
+            foreach (var game in games)
             {
-                Id = new Guid(),
-                Name = "game 1",
-                PitchName = "pitch 1",
-                HomeTeamName = "home team",
-                AwayTeamName = "away team"
-            };
+                Games.Add(game);
+            }
 
-            Games.Add(test1);
             OnPropertyChanged(nameof(Games));
         }
 
