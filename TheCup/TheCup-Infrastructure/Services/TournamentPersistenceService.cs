@@ -8,12 +8,22 @@ namespace TheCup_Infrastructure.Services;
 
 public sealed class TournamentPersistenceService : ITournamentPersistenceService
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    private static readonly JsonSerializerOptions JsonSaveOptions = new()
     {
         WriteIndented = true,
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        IncludeFields = true
+    };
+
+    private static readonly JsonSerializerOptions JsonLoadOptions = new()
+    {
+        WriteIndented = true,
+        PropertyNameCaseInsensitive = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        IncludeFields = true,
         Converters = 
         { 
             new TournamentJsonConverter(),
@@ -27,7 +37,7 @@ public sealed class TournamentPersistenceService : ITournamentPersistenceService
         cancellationToken.ThrowIfCancellationRequested();
 
         string filePath = FolderUtilities.TournamentJsonFilePath(tournament.Id);
-        var json = JsonSerializer.Serialize(tournament, JsonOptions);
+        var json = JsonSerializer.Serialize(tournament, JsonSaveOptions);
         File.WriteAllText(filePath, json);
 
         return Task.CompletedTask;
@@ -52,7 +62,7 @@ public sealed class TournamentPersistenceService : ITournamentPersistenceService
             try
             {
                 var json = File.ReadAllText(filePath);
-                var tournament = JsonSerializer.Deserialize<Tournament>(json, JsonOptions);
+                var tournament = JsonSerializer.Deserialize<Tournament>(json, JsonLoadOptions);
 
                 if (tournament is not null)
                 {
@@ -67,6 +77,21 @@ public sealed class TournamentPersistenceService : ITournamentPersistenceService
         }
 
         return Task.FromResult<IReadOnlyList<Tournament>>(tournaments.AsReadOnly());
+    }
+
+    public Task DeleteTournamentAsync(Guid tournamentId, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+
+        return Task.Run(() =>
+        {
+            string filePath = FolderUtilities.TournamentJsonFilePath(tournamentId);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }, cancellationToken);
     }
 }
 

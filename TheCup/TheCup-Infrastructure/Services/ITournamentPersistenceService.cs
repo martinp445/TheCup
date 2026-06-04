@@ -17,4 +17,6 @@ public interface ITournamentPersistenceService
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of loaded tournaments, or empty list if none exist.</returns>
     Task<IReadOnlyList<Tournament>> LoadTournamentsAsync(CancellationToken cancellationToken = default);
+
+    Task DeleteTournamentAsync(Guid tournamentId, CancellationToken cancellationToken = default);
 }

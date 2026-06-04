@@ -368,10 +368,8 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         {
             throw new InvalidOperationException("Generate groups before generating the schedule.");
         }
-        var games = GameScheduler.GenerateSchedule(tournament);
 
-        // make it better
-        foreach (var game in games)
+        foreach (var game in GameScheduler.GenerateSchedule(tournament))
         {
             tournament.Schedule.Add(game);
         }
@@ -389,7 +387,7 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
             throw new InvalidOperationException("Tournament was not found.");
         }
 
-        return Task.CompletedTask;
+        return _persistenceService.DeleteTournamentAsync(tournamentId, cancellationToken);
     }
 
     public Task SaveAsync(Guid tournamentId, CancellationToken cancellationToken = default)
