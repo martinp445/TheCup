@@ -46,9 +46,7 @@ namespace TheCup_Domain.Services
             return result;
         }
 
-        private static IEnumerable<Match> ScheduleMatches(
-    List<(Guid TeamA, Guid TeamB)> matches,
-    IEnumerable<Guid> pitches)
+        private static IEnumerable<Match> ScheduleMatches(List<(Guid TeamA, Guid TeamB)> matches, IEnumerable<Guid> pitches)
         {
             var remaining = matches.ToList();
             var pitchList = pitches.ToList();
