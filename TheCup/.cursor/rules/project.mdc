@@ -95,15 +95,10 @@ The solution is structured into layers:
   - defines interfaces (ports)
   - does NOT use UI types
 - Infrastructure:
-  - implements interfaces from Application
   - contains EF Core, file IO, APIs
 - Presentation:
   - uses Application services
   - contains Views and ViewModels only
-
-When crossing boundaries:
-- introduce interface (port) in Application
-- implement it in Infrastructure
 
 ---
 
