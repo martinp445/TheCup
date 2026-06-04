@@ -249,7 +249,7 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         {
             IsBusy = true;
 
-            // TODO schedule tournament
+            var games = await _repository.GenerateScheduleAsync(_tournamentId).ConfigureAwait(true);
         }
         catch (Exception ex)
         {

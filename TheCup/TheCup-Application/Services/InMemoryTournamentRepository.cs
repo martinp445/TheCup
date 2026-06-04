@@ -327,6 +327,14 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         return Task.FromResult(ToGroupSummaries(tournament));
     }
 
+    public Task<IReadOnlyList<GameSummary>> GetScheduleAsync(Guid tournamentId, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var tournament = FindTournament(tournamentId)
+            ?? throw new InvalidOperationException("Tournament was not found.");
+        return Task.FromResult(ToGameSummaries(tournament));
+    }
+
     public Task<IReadOnlyList<GameSummary>> GenerateScheduleAsync(Guid tournamentId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

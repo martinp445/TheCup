@@ -55,7 +55,7 @@ namespace TheCup_Application.ViewModels
             }
 
             ApplySummary(summary);
-            var games = await _repository.GenerateScheduleAsync(tournamentId).ConfigureAwait(true);
+            var games = await _repository.GetScheduleAsync(tournamentId).ConfigureAwait(true);
 
             Games.Clear();
             foreach (var game in games)
