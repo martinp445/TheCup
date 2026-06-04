@@ -47,4 +47,6 @@ public interface ITournamentRepository
     Task<IReadOnlyList<GameSummary>> GenerateScheduleAsync(Guid tournamentId, CancellationToken cancellationToken = default);
 
     Task DeleteAsync(Guid tournamentId, CancellationToken cancellationToken = default);
+
+    Task SaveAsync(Guid tournamentId, CancellationToken cancellationToken = default);
 }

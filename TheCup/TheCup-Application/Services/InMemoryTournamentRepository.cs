@@ -372,6 +372,22 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         return Task.CompletedTask;
     }
 
+    public Task SaveAsync(Guid tournamentId, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var saved = FindTournament(tournamentId);
+
+        if (saved is null)
+        {
+            throw new InvalidOperationException("Tournament was not found.");
+        }
+
+        // TODO - implement JSON persistence
+
+        return Task.CompletedTask;
+    }
+
     private Tournament? FindTournament(Guid tournamentId)
         => _tournaments.FirstOrDefault(t => t.Id == tournamentId);
 

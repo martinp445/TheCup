@@ -35,6 +35,10 @@ public sealed class TournamentHomeViewModel : ViewModel, IHasStatusMessage
         DeleteTournamentCommand = new ActionCommand(
             () => _ = DeleteSelectedTournamentAsync(),
             () => !IsBusy && SelectedTournament is not null);
+
+        SaveTournamentCommand = new ActionCommand(
+            () => _ = SaveSelectedTournamentAsync(),
+            () => !IsBusy && SelectedTournament is not null);
     }
 
     public event Action? NewTournamentRequested;
@@ -88,6 +92,8 @@ public sealed class TournamentHomeViewModel : ViewModel, IHasStatusMessage
     public ICommand OpenTournamentCommand { get; }
 
     public ICommand DeleteTournamentCommand { get; }
+
+    public ICommand SaveTournamentCommand { get; }
 
     public async Task LoadAsync()
     {
@@ -175,6 +181,30 @@ public sealed class TournamentHomeViewModel : ViewModel, IHasStatusMessage
         }
     }
 
+    private async Task SaveSelectedTournamentAsync()
+    {
+        if (IsBusy || SelectedTournament is null)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            ErrorMessage = null;
+
+            await _repository.SaveAsync(SelectedTournament.Id).ConfigureAwait(true);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to save tournament: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     private void RaiseSelectionCommandStates()
     {
         if (OpenTournamentCommand is ActionCommand open)
@@ -185,6 +215,11 @@ public sealed class TournamentHomeViewModel : ViewModel, IHasStatusMessage
         if (DeleteTournamentCommand is ActionCommand delete)
         {
             delete.RaiseCanExecuteChanged();
+        }
+
+        if (SaveTournamentCommand is ActionCommand save)
+        {
+            save.RaiseCanExecuteChanged();
         }
     }
 
