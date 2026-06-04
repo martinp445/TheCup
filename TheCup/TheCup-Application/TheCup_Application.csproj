@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TheCup-Domain\TheCup_Domain.csproj" />
+    <ProjectReference Include="..\TheCup-Infrastructure\TheCup_Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

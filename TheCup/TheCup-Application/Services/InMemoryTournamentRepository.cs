@@ -1,9 +1,13 @@
+using System.IO;
+using System.Text.Json;
 using TheCup_Application.Models;
 using TheCup_Application.Ports;
 using TheCup_Domain.Entities;
 using TheCup_Domain.Enums;
 using TheCup_Domain.Services;
 using TheCup_Domain.ValueObjects;
+using TheCup_Infrastructure.Enviroment;
+using TheCup_Infrastructure.Services;
 
 namespace TheCup_Application.Services;
 
@@ -13,6 +17,22 @@ namespace TheCup_Application.Services;
 public sealed class InMemoryTournamentRepository : ITournamentRepository
 {
     private readonly List<Tournament> _tournaments = [];
+    private readonly ITournamentPersistenceService _persistenceService;
+
+    public InMemoryTournamentRepository(ITournamentPersistenceService persistenceService)
+    {
+        _persistenceService = persistenceService ?? throw new ArgumentNullException(nameof(persistenceService));
+    }
+
+    /// <summary>
+    /// Initializes the repository by loading persisted tournaments from JSON files.
+    /// Call this after construction to populate the in-memory store.
+    /// </summary>
+    public async Task InitializeAsync(CancellationToken cancellationToken = default)
+    {
+        var loadedTournaments = await _persistenceService.LoadTournamentsAsync(cancellationToken).ConfigureAwait(false);
+        _tournaments.AddRange(loadedTournaments);
+    }
 
     public Task<IReadOnlyList<TournamentSummary>> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -376,16 +396,14 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var saved = FindTournament(tournamentId);
+        var tournament = FindTournament(tournamentId);
 
-        if (saved is null)
+        if (tournament is null)
         {
             throw new InvalidOperationException("Tournament was not found.");
         }
 
-        // TODO - implement JSON persistence
-
-        return Task.CompletedTask;
+        return _persistenceService.SaveTournamentAsync(tournament, cancellationToken);
     }
 
     private Tournament? FindTournament(Guid tournamentId)

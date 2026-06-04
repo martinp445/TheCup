@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TheCup-Application\TheCup_Application.csproj" />
+    <ProjectReference Include="..\TheCup-Domain\TheCup_Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -20,6 +20,7 @@
     <system:String x:Key="Home_EmptyMessage">Start by creating your first tournament. You can add teams, run the group draw, schedule matches, and build playoffs.</system:String>
     <system:String x:Key="Home_Refresh">Refresh</system:String>
     <system:String x:Key="Home_OpenTournament">Open</system:String>
+    <system:String x:Key="Home_SaveTournament">Save</system:String>
     <system:String x:Key="Home_DeleteTournament">Delete</system:String>
 
     <system:String x:Key="Create_Title">New tournament</system:String>

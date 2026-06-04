@@ -9,9 +9,9 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        InitializeComponent();
         _viewModel = new MainWindowViewModel();
         DataContext = _viewModel;
-        InitializeComponent();
         Loaded += OnLoaded;
     }
 

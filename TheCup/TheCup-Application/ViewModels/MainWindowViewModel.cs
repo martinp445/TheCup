@@ -3,6 +3,7 @@ using TheCup_Application.Models;
 using TheCup_Application.Ports;
 using TheCup_Application.Services;
 using TheCup_Domain.Enums;
+using TheCup_Infrastructure.Services;
 
 namespace TheCup_Application.ViewModels;
 
@@ -25,7 +26,7 @@ public sealed class MainWindowViewModel : ViewModel
     private bool _suppressNavChange;
 
     public MainWindowViewModel()
-        : this(new InMemoryTournamentRepository())
+        : this(new InMemoryTournamentRepository(new TournamentPersistenceService()))
     {
     }
 
@@ -134,7 +135,17 @@ public sealed class MainWindowViewModel : ViewModel
         }
     }
 
-    public async Task InitializeAsync() => await Home.LoadAsync().ConfigureAwait(true);
+    public async Task InitializeAsync()
+    {
+        // Initialize repository by loading persisted tournaments if it's an InMemoryTournamentRepository
+        if (_repository is InMemoryTournamentRepository inMemoryRepo)
+        {
+            await inMemoryRepo.InitializeAsync().ConfigureAwait(true);
+        }
+
+        // Load tournaments into the Home view
+        await Home.LoadAsync().ConfigureAwait(true);
+    }
 
     public void ShowHome()
     {

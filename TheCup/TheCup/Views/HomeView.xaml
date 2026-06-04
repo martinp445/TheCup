@@ -44,6 +44,10 @@
                         Margin="0,0,12,0"
                         Command="{Binding DeleteTournamentCommand}" />
                 <Button Style="{StaticResource SecondaryButton}"
+                        Content="{StaticResource Home_SaveTournament}"
+                        Margin="0,0,12,0"
+                        Command="{Binding SaveTournamentCommand}" />
+                <Button Style="{StaticResource SecondaryButton}"
                         Content="{StaticResource Home_OpenTournament}"
                         Margin="0,0,12,0"
                         Command="{Binding OpenTournamentCommand}" />
