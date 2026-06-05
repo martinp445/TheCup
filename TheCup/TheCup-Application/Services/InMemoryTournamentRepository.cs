@@ -509,6 +509,7 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
     private static IReadOnlyList<GroupSummary> ToGroupSummaries(Tournament tournament)
     {
         var teams = tournament.Teams.Select(t => ToTeamSummary(t));
+        var games = tournament.Schedule;
 
         return tournament.Groups
             .Select(group => new GroupSummary
@@ -517,6 +518,71 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
                 Name = group.Name,
                 Teams = group.TeamIds
                     .Select(id => teams.FirstOrDefault(t => t.Id == id))
+                    .OrderByDescending(t => t?.Points)
+                    .ThenByDescending(t => (t?.Goals - t?.ConcededGoals))
+                    .ThenByDescending(t => t?.Goals)
+                    .GroupBy(t => new {
+                        Points = t?.Points,
+                        GoalDifference = t?.Goals - t?.ConcededGoals,
+                        Goals = t?.Goals
+                    })
+                    .SelectMany(g =>
+                    {
+                        if (g.Count() == 1)
+                        {
+                            return g;
+                        }
+
+                        // TODO should be in domain
+                        var matches = games.Where(game =>
+                                game.Status == GameStatus.Finished &&
+                                g.Any(t => t != null && game.Teams.Item1 == t.Id) &&
+                                g.Any(t => t != null && game.Teams.Item2 == t.Id)
+                            );
+                        if (!matches.Any())
+                        {
+                            // No matches between the tied teams, so we can't break the tie
+                            return g;
+                        }
+
+                        // Note: this solution works only if teams only played against each other once.
+                        var miniTable = matches.SelectMany(game =>
+                        {
+                            var homeTeamId = game.Teams.Item1;
+                            var awayTeamId = game.Teams.Item2;
+                            var homeTeam = g.FirstOrDefault(t => t != null && t.Id == homeTeamId);
+                            var awayTeam = g.FirstOrDefault(t => t != null && t.Id == awayTeamId);
+
+                            var homeTeamScore = game.HomeTeamScore;
+                            var awayTeamScore = game.AwayTeamScore;
+                            var homePoints = homeTeamScore > awayTeamScore ? 3 : homeTeamScore == awayTeamScore ? 1 : 0;
+                            var awayPoints = awayTeamScore > homeTeamScore ? 3 : homeTeamScore == awayTeamScore ? 1 : 0;
+
+                            return new[]
+                            {
+                                new
+                                {
+                                    Team = homeTeam,
+                                    Points = homePoints,
+                                    GoalDifference = homeTeamScore - awayTeamScore,
+                                    Goals = homeTeamScore
+                                },
+                                new
+                                {
+                                    Team = awayTeam,
+                                    Points = awayPoints,
+                                    GoalDifference = awayTeamScore - homeTeamScore,
+                                    Goals = awayTeamScore
+                                }
+                            };
+                        });
+
+                        return miniTable
+                            .OrderByDescending(t => t?.Points)
+                            .ThenByDescending(t => t?.GoalDifference)
+                            .ThenByDescending(t => t?.Goals)
+                            .Select(t => t?.Team);
+                    })
                     .ToList()
             })
             .ToList();
