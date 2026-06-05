@@ -6,7 +6,7 @@ public sealed class GroupSummary
 
     public required string Name { get; init; }
 
-    public required IReadOnlyList<string> TeamNames { get; init; }
+    public required IReadOnlyList<TeamSummary?> Teams { get; init; }
 
-    public string TeamCountDisplay => TeamNames.Count == 1 ? "1 team" : $"{TeamNames.Count} teams";
+    public string TeamCountDisplay => Teams.Count == 1 ? "1 team" : $"{Teams.Count} teams";
 }

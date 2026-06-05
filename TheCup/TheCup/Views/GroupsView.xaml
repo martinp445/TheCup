@@ -147,13 +147,43 @@
                                                Text="{Binding TeamCountDisplay}" />
                                 </Grid>
                                 <ItemsControl Margin="0,12,0,0"
-                                              ItemsSource="{Binding TeamNames}">
+                                              ItemsSource="{Binding Teams}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Margin="0,0,0,6"
-                                                       Foreground="{StaticResource Brush.TextPrimary}"
-                                                       FontSize="14"
-                                                       Text="{Binding StringFormat='• {0}', Mode=OneWay}" />
+                                            <Grid Margin="0,0,0,6">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0"
+                                                           Margin="0,0,2,0"
+                                                           HorizontalAlignment="Left"
+                                                           Foreground="{StaticResource Brush.TextPrimary}"
+                                                           FontSize="14"
+                                                           Text="{Binding Path=Name, StringFormat='• {0}', Mode=OneWay, TargetNullValue='Unknown'}" />
+
+                                                <StackPanel Grid.Column="1"
+                                                            Orientation="Horizontal"
+                                                            Margin="0,0,5,0"
+                                                            HorizontalAlignment="Right">
+                                                    <TextBlock Margin="0,0,24,0"
+                                                            Foreground="{StaticResource Brush.AccentPrimary}"
+                                                            FontSize="14"
+                                                            Text="{Binding Path=Points, Mode=OneWay, TargetNullValue=''}" />
+                                                    <TextBlock Margin="4,0,2,0"
+                                                            Foreground="{StaticResource Brush.TextSecondary}"
+                                                            FontSize="14"
+                                                            Text="{Binding Path=Goals, Mode=OneWay, TargetNullValue=''}" />
+                                                    <TextBlock Margin="1,0,1,0"
+                                                            Foreground="{StaticResource Brush.TextSecondary}"
+                                                            FontSize="14"
+                                                            Text=":" />
+                                                    <TextBlock Margin="2,0,0,0"
+                                                            Foreground="{StaticResource Brush.TextSecondary}"
+                                                            FontSize="14"
+                                                            Text="{Binding Path=ConcededGoals, Mode=OneWay, TargetNullValue=''}" />
+                                                </StackPanel>
+                                            </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>

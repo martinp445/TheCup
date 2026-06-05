@@ -508,15 +508,15 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
 
     private static IReadOnlyList<GroupSummary> ToGroupSummaries(Tournament tournament)
     {
-        var teamNames = tournament.Teams.ToDictionary(t => t.Id, t => t.Name);
+        var teams = tournament.Teams.Select(t => ToTeamSummary(t));
 
         return tournament.Groups
             .Select(group => new GroupSummary
             {
                 Id = group.Id,
                 Name = group.Name,
-                TeamNames = group.TeamIds
-                    .Select(id => teamNames.TryGetValue(id, out var name) ? name : "Unknown team")
+                Teams = group.TeamIds
+                    .Select(id => teams.FirstOrDefault(t => t.Id == id))
                     .ToList()
             })
             .ToList();
@@ -544,7 +544,10 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
     private static TeamSummary ToTeamSummary(Team team) => new()
     {
         Id = team.Id,
-        Name = team.Name
+        Name = team.Name,
+        Points = team.Points,
+        Goals = team.Goals,
+        ConcededGoals = team.ConcededGoals
     };
 
     private static PitchSummary ToPitchSummary(Pitch pitch) => new()
