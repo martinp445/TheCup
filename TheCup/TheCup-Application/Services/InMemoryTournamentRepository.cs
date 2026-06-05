@@ -377,6 +377,84 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         return Task.FromResult(ToGameSummaries(tournament));
     }
 
+    public Task<GameStatus> StartGameAsync(Guid tournamentId, Guid gameId, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var tournament = FindTournament(tournamentId)
+            ?? throw new InvalidOperationException("Tournament was not found.");
+
+        var game = tournament.Schedule.FirstOrDefault(g => g.Id == gameId)
+            ?? throw new InvalidOperationException("Game was not found.");
+
+        if (game.Status != GameStatus.Scheduled)
+        {
+            throw new InvalidOperationException("Only scheduled games can be started.");
+        }
+
+        game.Status = GameStatus.Ongoing;
+        return Task.FromResult(game.Status);
+    }
+
+    public Task<GameStatus> FinishGameAsync(Guid tournamentId, Guid gameId, int homeTeamScore, int awayTeamScore, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var tournament = FindTournament(tournamentId)
+            ?? throw new InvalidOperationException("Tournament was not found.");
+
+        var game = tournament.Schedule.FirstOrDefault(g => g.Id == gameId)
+            ?? throw new InvalidOperationException("Game was not found.");
+
+        if (game.Status != GameStatus.Ongoing)
+        {
+            throw new InvalidOperationException("Only ongoing games can be finished.");
+        }
+
+        // Set the scores
+        game.HomeTeamScore = homeTeamScore;
+        game.AwayTeamScore = awayTeamScore;
+        game.Status = GameStatus.Finished;
+
+        // Update team statistics and award points
+        var homeTeamId = game.Teams.Item1;
+        var awayTeamId = game.Teams.Item2;
+
+        var homeTeam = tournament.Teams.FirstOrDefault(t => t.Id == homeTeamId);
+        var awayTeam = tournament.Teams.FirstOrDefault(t => t.Id == awayTeamId);
+
+        // TODO: This should be in domain
+        if (homeTeam != null && awayTeam != null)
+        {
+            // Update goals
+            homeTeam.Goals += homeTeamScore;
+            homeTeam.ConcededGoals += awayTeamScore;
+
+            awayTeam.Goals += awayTeamScore;
+            awayTeam.ConcededGoals += homeTeamScore;
+
+            // Award points: 3 for win, 1 for draw
+            if (homeTeamScore > awayTeamScore)
+            {
+                // Home team wins
+                homeTeam.Points += 3;
+            }
+            else if (awayTeamScore > homeTeamScore)
+            {
+                // Away team wins
+                awayTeam.Points += 3;
+            }
+            else
+            {
+                // Draw
+                homeTeam.Points += 1;
+                awayTeam.Points += 1;
+            }
+        }
+
+        return Task.FromResult(game.Status);
+    }
+
     public Task DeleteAsync(Guid tournamentId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -455,7 +533,10 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
                 Name = game.Name,
                 PitchName = pitchNames.TryGetValue(game.PitchId, out var pitchName) ? pitchName : "Unknown pitch",
                 HomeTeamName = teamNames.TryGetValue(game.Teams.Item1, out var homeTeamName) ? homeTeamName : "Unknown team",
-                AwayTeamName = teamNames.TryGetValue(game.Teams.Item2, out var awayTeamName) ? awayTeamName : "Unknown team"
+                AwayTeamName = teamNames.TryGetValue(game.Teams.Item2, out var awayTeamName) ? awayTeamName : "Unknown team",
+                Status = game.Status,
+                HomeTeamScore = game.HomeTeamScore,
+                AwayTeamScore = game.AwayTeamScore
             })
             .ToList();
     }

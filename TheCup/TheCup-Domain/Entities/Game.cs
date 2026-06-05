@@ -1,4 +1,5 @@
-﻿
+﻿using TheCup_Domain.Enums;
+
 namespace TheCup_Domain.Entities
 {
     public class Game
@@ -10,5 +11,11 @@ namespace TheCup_Domain.Entities
         public Guid PitchId { get; set; }
 
         public ValueTuple<Guid, Guid> Teams { get; set; }
+
+        public GameStatus Status { get; set; } = GameStatus.Scheduled;
+
+        public int HomeTeamScore { get; set; } = 0;
+
+        public int AwayTeamScore { get; set; } = 0;
     }
 }

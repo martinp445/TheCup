@@ -21,6 +21,9 @@ public class GameJsonConverter : JsonConverter<Game>
         var name = "Game";
         var pitchId = Guid.Empty;
         var teams = new ValueTuple<Guid, Guid>(Guid.Empty, Guid.Empty);
+        var status = 0;
+        var homeTeamScore = 0;
+        var awayTeamScore = 0;
 
         while (reader.Read())
         {
@@ -51,6 +54,15 @@ public class GameJsonConverter : JsonConverter<Game>
                 case "teams":
                     teams = JsonSerializer.Deserialize<(Guid, Guid)>(ref reader, options);
                     break;
+                case "status":
+                    status = reader.GetInt32();
+                    break;
+                case "hometeamscore":
+                    homeTeamScore = reader.GetInt32();
+                    break;
+                case "awayteamscore":
+                    awayTeamScore = reader.GetInt32();
+                    break;
             }
         }
 
@@ -59,7 +71,10 @@ public class GameJsonConverter : JsonConverter<Game>
             Id = id,
             Name = name,
             PitchId = pitchId,
-            Teams = teams
+            Teams = teams,
+            Status = (global::TheCup_Domain.Enums.GameStatus)status,
+            HomeTeamScore = homeTeamScore,
+            AwayTeamScore = awayTeamScore
         };
     }
 

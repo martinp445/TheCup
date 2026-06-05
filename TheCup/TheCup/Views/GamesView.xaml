@@ -4,8 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TheCup_Presentation.Views"
+             xmlns:converters="clr-namespace:TheCup_Presentation.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <converters:GameStatusToVisibilityConverter x:Key="StatusToVisibilityConverter" />
+    </UserControl.Resources>
     
     <Grid Margin="32,24">
         <Grid.RowDefinitions>
@@ -51,25 +56,108 @@
                         <Border Style="{StaticResource TournamentCardBorder}">
                             <StackPanel>
                                 <Grid>
-                                    <TextBlock Text="{Binding Name}"
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                       Text="{Binding Name}"
                                        Foreground="{StaticResource Brush.AccentPrimary}"
                                        FontSize="18"
                                        FontWeight="SemiBold" />
+                                    <TextBlock Grid.Column="1"
+                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                       FontSize="12"
+                                       Text="{Binding Status}" />
                                 </Grid>
+
+                                <!-- Pitch info -->
+                                <TextBlock Margin="0,8,0,0"
+                                       Foreground="{StaticResource Brush.TextSecondary}"
+                                       FontSize="12"
+                                       Text="{Binding PitchName}" />
+
+                                <!-- Teams and Score -->
+                                <Grid Margin="0,12,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Home Team -->
+                                    <TextBlock Grid.Column="0"
+                                       Foreground="{StaticResource Brush.TextPrimary}"
+                                       FontSize="14"
+                                       Text="{Binding HomeTeamName}"
+                                       TextAlignment="Right" />
+
+                                    <!-- Score -->
+                                    <StackPanel Grid.Column="1"
+                                       Margin="12,0,12,0"
+                                       Orientation="Horizontal"
+                                       HorizontalAlignment="Center">
+                                        <TextBlock Foreground="{StaticResource Brush.AccentPrimary}"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding HomeTeamScore}" />
+                                        <TextBlock Margin="4,0,4,0"
+                                           Foreground="{StaticResource Brush.AccentPrimary}"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           Text="-" />
+                                        <TextBlock Foreground="{StaticResource Brush.AccentPrimary}"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding AwayTeamScore}" />
+                                    </StackPanel>
+
+                                    <!-- Away Team -->
+                                    <TextBlock Grid.Column="2"
+                                       Foreground="{StaticResource Brush.TextPrimary}"
+                                       FontSize="14"
+                                       Text="{Binding AwayTeamName}" />
+                                </Grid>
+
+                                <!-- Score Input - visible when Scheduled or Ongoing (Editable) -->
                                 <StackPanel Margin="0,12,0,0"
-                                            Orientation="Horizontal">
-                                    <TextBlock
-                                        Foreground="{StaticResource Brush.TextPrimary}"
-                                        FontSize="12"
-                                        Text="{Binding PitchName}" />
-                                    <TextBlock Margin="8,0,0,0"
-                                        Foreground="{StaticResource Brush.TextPrimary}"
-                                        FontSize="14"
-                                        Text="{Binding HomeTeamName}" />
-                                    <TextBlock Margin="6,0,0,0"
-                                        Foreground="{StaticResource Brush.TextPrimary}"
-                                        FontSize="14"
-                                        Text="{Binding AwayTeamName}" />
+                                           Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}, ConverterParameter=Editable}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Home Team Score Input -->
+                                        <TextBox Grid.Column="0"
+                                            Margin="0,0,6,0"
+                                            Padding="6,4"
+                                            Style="{StaticResource DarkTextBox}"
+                                            Text="{Binding HomeTeamScore, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                        <!-- Away Team Score Input -->
+                                        <TextBox Grid.Column="2"
+                                            Margin="6,0,0,0"
+                                            Padding="6,4"
+                                            Style="{StaticResource DarkTextBox}"
+                                            Text="{Binding AwayTeamScore, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </Grid>
+
+                                    <!-- Action Buttons -->
+                                    <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                        <Button Style="{StaticResource SecondaryButton}"
+                                            Content="{StaticResource Games_StartGame}"
+                                            Margin="0,0,6,0"
+                                            Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}, ConverterParameter=Scheduled}"
+                                            Command="{Binding DataContext.StartGameCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" />
+                                        <Button Style="{StaticResource PrimaryButton}"
+                                            Content="{StaticResource Games_FinishGame}"
+                                            Visibility="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}, ConverterParameter=Ongoing}"
+                                            Command="{Binding DataContext.FinishGameCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" />
+                                    </StackPanel>
                                 </StackPanel>
                             </StackPanel>
                         </Border>

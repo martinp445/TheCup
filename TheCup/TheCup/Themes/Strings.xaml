@@ -73,6 +73,11 @@
 
     <system:String x:Key="Games_Title">Games</system:String>
     <system:String x:Key="Games_Subtitle">Games schedule.</system:String>
+    <system:String x:Key="Games_StartGame">Start</system:String>
+    <system:String x:Key="Games_FinishGame">Finish</system:String>
+    <system:String x:Key="Games_Scheduled">Scheduled</system:String>
+    <system:String x:Key="Games_Ongoing">Ongoing</system:String>
+    <system:String x:Key="Games_Finished">Finished</system:String>
 
     <system:String x:Key="Header_ActiveTournament">Active tournament</system:String>
 
