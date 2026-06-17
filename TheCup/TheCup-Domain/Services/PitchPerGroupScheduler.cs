@@ -57,6 +57,8 @@ namespace TheCup_Domain.Services
                     }
                 }
 
+                int matchNumberInGroup = 1;
+
                 // flatten into result with pitch assigned
                 foreach (var round in rounds)
                 {
@@ -66,13 +68,14 @@ namespace TheCup_Domain.Services
                         {
                             TeamA = m.A,
                             TeamB = m.B,
-                            Pitch = pitch
+                            Pitch = pitch,
+                            Round = matchNumberInGroup++
                         });
                     }
                 }
             }
 
-            return result;
+            return result.OrderBy(m => m.Round);
         }
     }
 }

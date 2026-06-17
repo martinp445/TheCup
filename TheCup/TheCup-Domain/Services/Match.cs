@@ -5,5 +5,6 @@
         public Guid TeamA { get; set; }
         public Guid TeamB { get; set; }
         public Guid Pitch { get; set; }
+        public int Round { get; set; }
     }
 }

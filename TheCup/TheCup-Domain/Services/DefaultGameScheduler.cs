@@ -65,7 +65,8 @@
                     {
                         TeamA = match.TeamA,
                         TeamB = match.TeamB,
-                        Pitch = bestPitch
+                        Pitch = bestPitch,
+                        Round = currentSlot + 1
                     });
 
                     availablePitches.Remove(bestPitch);

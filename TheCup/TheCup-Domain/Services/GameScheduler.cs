@@ -28,7 +28,7 @@ public class GameScheduler
         return scheduledMatches.Select((match, index) => new Game
         {
             Id = Guid.NewGuid(),
-            Name = $"Game {index + 1}",
+            Name = $"Round {match.Round}",
             PitchId = match.Pitch,
             Teams = (match.TeamA, match.TeamB)
         });
@@ -55,7 +55,7 @@ public class GameScheduler
         return scheduledMatches.Select((match, index) => new Game
         {
             Id = Guid.NewGuid(),
-            Name = $"Game {index + 1}",
+            Name = $"Round {match.Round}",
             PitchId = match.Pitch,
             Teams = (match.TeamA, match.TeamB)
         });
