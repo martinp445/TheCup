@@ -19,7 +19,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <StackPanel>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
                 <TextBlock Style="{StaticResource SectionTitle}"
                Text="{StaticResource Games_Title}" />
                 <TextBlock Style="{StaticResource SectionSubtitle}"
@@ -44,6 +48,12 @@
                FontSize="12"
                Text="{Binding StatusMessage}" />
             </StackPanel>
+            <Button Grid.Column="1"
+                    VerticalAlignment="Top"
+                    Style="{StaticResource SecondaryButton}"
+                    Content="{StaticResource Games_ExportPdf}"
+                    Command="{Binding ExportToPdfCommand}"
+                    Visibility="{Binding HasSchedule, Converter={StaticResource BoolToVisibility}}" />
         </Grid>
 
         <Border Grid.Row="1"

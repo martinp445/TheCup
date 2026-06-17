@@ -77,6 +77,7 @@
     <system:String x:Key="Games_ScheduleGeneratorMessage">Choose how matches are assigned to pitches. Round robin (group per pitch) is available only when the number of groups equals the number of pitches.</system:String>
     <system:String x:Key="Games_ScheduleTypeLabel">Schedule type</system:String>
     <system:String x:Key="Games_GenerateSchedule">Generate schedule</system:String>
+    <system:String x:Key="Games_ExportPdf">Export PDF</system:String>
     <system:String x:Key="Games_StartGame">Start</system:String>
     <system:String x:Key="Games_FinishGame">Finish</system:String>
     <system:String x:Key="Games_Scheduled">Scheduled</system:String>

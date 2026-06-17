@@ -1,5 +1,8 @@
 ﻿using System.Windows;
 using TheCup_Application.ViewModels;
+using TheCup_Application.Services;
+using TheCup_Infrastructure.Services;
+using TheCup_Presentation.Services;
 
 namespace TheCup_Presentation;
 
@@ -10,7 +13,10 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        _viewModel = new MainWindowViewModel();
+        _viewModel = new MainWindowViewModel(
+            new InMemoryTournamentRepository(new TournamentPersistenceService()),
+            new WpfFileSaveDialogService(),
+            new GameSchedulePdfExporter());
         DataContext = _viewModel;
         Loaded += OnLoaded;
     }

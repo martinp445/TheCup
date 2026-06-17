@@ -1,16 +1,20 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows.Input;
 using TheCup_Application.Commands;
 using TheCup_Application.Models;
 using TheCup_Application.Ports;
 using TheCup_Application.Services;
 using TheCup_Domain.Enums;
+using TheCup_Infrastructure.Services;
 
 namespace TheCup_Application.ViewModels;
 
 public class GamesViewModel : ViewModel, IHasStatusMessage
 {
     private readonly ITournamentRepository _repository;
+    private readonly IFileSaveDialogService _fileSaveDialog;
+    private readonly IGameSchedulePdfExporter _pdfExporter;
     private Guid _tournamentId;
     private string _tournamentName = string.Empty;
     private TournamentStatus _status = TournamentStatus.Draft;
@@ -24,9 +28,14 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
     private GameSummary? _selectedGame;
     private ScheduleTypeOption? _selectedScheduleType;
 
-    public GamesViewModel(ITournamentRepository repository)
+    public GamesViewModel(
+        ITournamentRepository repository,
+        IFileSaveDialogService fileSaveDialog,
+        IGameSchedulePdfExporter pdfExporter)
     {
         _repository = repository;
+        _fileSaveDialog = fileSaveDialog;
+        _pdfExporter = pdfExporter;
         Games = new ObservableCollection<GameSummary>();
         ScheduleTypeOptions = new ObservableCollection<ScheduleTypeOption>();
 
@@ -41,6 +50,10 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
         GenerateScheduleCommand = new ActionCommand(
             () => _ = GenerateScheduleAsync(),
             () => !IsBusy && CanGenerateSchedule);
+
+        ExportToPdfCommand = new ActionCommand(
+            () => _ = ExportToPdfAsync(),
+            () => !IsBusy && CanExportToPdf);
     }
 
     public ObservableCollection<GameSummary> Games { get; }
@@ -103,7 +116,9 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
             if (SetProperty(ref _hasSchedule, value))
             {
                 OnPropertyChanged(nameof(ShowScheduleGenerator));
+                OnPropertyChanged(nameof(CanExportToPdf));
                 RaiseGenerateScheduleCanExecute();
+                RaiseExportCanExecute();
             }
         }
     }
@@ -113,6 +128,8 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
     public bool CanGenerateSchedule =>
         IsActive && HasGroups && !HasSchedule && !IsBusy
         && SelectedScheduleType is not null && SelectedScheduleType.IsAvailable;
+
+    public bool CanExportToPdf => HasSchedule && Games.Count > 0 && !IsBusy;
 
     public bool IsActive => _status == TournamentStatus.Active;
 
@@ -136,6 +153,8 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
     public ICommand FinishGameCommand { get; }
 
     public ICommand GenerateScheduleCommand { get; }
+
+    public ICommand ExportToPdfCommand { get; }
 
     public async Task LoadAsync(Guid tournamentId)
     {
@@ -175,6 +194,7 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
         }
 
         OnPropertyChanged(nameof(Games));
+        RaiseExportCanExecute();
     }
 
     private async Task GenerateScheduleAsync()
@@ -202,6 +222,7 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
 
             StatusMessage = $"Generated {games.Count} games.";
             OnPropertyChanged(nameof(Games));
+            RaiseExportCanExecute();
         }
         catch (Exception ex)
         {
@@ -211,6 +232,57 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
         {
             IsBusy = false;
         }
+    }
+
+    private async Task ExportToPdfAsync()
+    {
+        if (IsBusy || !CanExportToPdf)
+        {
+            return;
+        }
+
+        var suggestedFileName = $"{SanitizeFileName(TournamentName)} - Games.pdf";
+        var filePath = _fileSaveDialog.PromptSavePdf(suggestedFileName);
+        if (filePath is null)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            ErrorMessage = null;
+
+            var request = new GameSchedulePdfRequest
+            {
+                TournamentName = TournamentName,
+                Games = Games
+                    .Select(game => new GameSchedulePdfRow
+                    {
+                        PitchName = game.PitchName,
+                        HomeTeamName = game.HomeTeamName,
+                        AwayTeamName = game.AwayTeamName
+                    })
+                    .ToList()
+            };
+
+            await _pdfExporter.ExportAsync(request, filePath).ConfigureAwait(true);
+            StatusMessage = $"Exported {Games.Count} games to PDF.";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to export PDF: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private static string SanitizeFileName(string name)
+    {
+        var invalidChars = Path.GetInvalidFileNameChars();
+        return string.Concat(name.Select(character => invalidChars.Contains(character) ? '_' : character)).Trim();
     }
 
     private async Task StartGameAsync(GameSummary? game)
@@ -292,6 +364,7 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
     private void RaiseCommandStates()
     {
         RaiseGenerateScheduleCanExecute();
+        RaiseExportCanExecute();
 
         if (StartGameCommand is ActionCommand start)
         {
@@ -311,6 +384,16 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
         if (GenerateScheduleCommand is ActionCommand generate)
         {
             generate.RaiseCanExecuteChanged();
+        }
+    }
+
+    private void RaiseExportCanExecute()
+    {
+        OnPropertyChanged(nameof(CanExportToPdf));
+
+        if (ExportToPdfCommand is ActionCommand export)
+        {
+            export.RaiseCanExecuteChanged();
         }
     }
 }
