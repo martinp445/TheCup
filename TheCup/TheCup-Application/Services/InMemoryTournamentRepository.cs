@@ -347,6 +347,49 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         return Task.FromResult(ToGroupSummaries(tournament));
     }
 
+    public Task<IReadOnlyList<GroupSummary>> MoveTeamBetweenGroupsAsync(
+        Guid tournamentId,
+        Guid teamId,
+        Guid sourceGroupId,
+        Guid targetGroupId,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var tournament = FindTournament(tournamentId)
+            ?? throw new InvalidOperationException("Tournament was not found.");
+
+        if (tournament.Status != TournamentStatus.Active)
+        {
+            throw new InvalidOperationException("Start the tournament before moving teams between groups.");
+        }
+
+        if (tournament.Schedule.Count > 0)
+        {
+            throw new InvalidOperationException("Cannot move teams after the schedule has been generated.");
+        }
+
+        if (sourceGroupId == targetGroupId)
+        {
+            return Task.FromResult(ToGroupSummaries(tournament));
+        }
+
+        var sourceGroup = tournament.Groups.FirstOrDefault(g => g.Id == sourceGroupId)
+            ?? throw new InvalidOperationException("Source group was not found.");
+        var targetGroup = tournament.Groups.FirstOrDefault(g => g.Id == targetGroupId)
+            ?? throw new InvalidOperationException("Target group was not found.");
+
+        if (!sourceGroup.TeamIds.Contains(teamId))
+        {
+            throw new InvalidOperationException("Team is not in the source group.");
+        }
+
+        sourceGroup.TeamIds.Remove(teamId);
+        targetGroup.TeamIds.Add(teamId);
+
+        return Task.FromResult(ToGroupSummaries(tournament));
+    }
+
     public Task<IReadOnlyList<GameSummary>> GetScheduleAsync(Guid tournamentId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

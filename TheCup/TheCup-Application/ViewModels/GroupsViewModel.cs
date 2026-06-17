@@ -24,6 +24,7 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
     private string _statusMessage = string.Empty;
     private bool _hasGroups;
     private bool _teamsConfirmed;
+    private bool _hasSchedule;
 
     public GroupsViewModel(ITournamentRepository repository)
     {
@@ -129,6 +130,20 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         private set => SetProperty(ref _hasGroups, value);
     }
 
+    public bool HasSchedule
+    {
+        get => _hasSchedule;
+        private set
+        {
+            if (SetProperty(ref _hasSchedule, value))
+            {
+                OnPropertyChanged(nameof(CanMoveTeamsBetweenGroups));
+            }
+        }
+    }
+
+    public bool CanMoveTeamsBetweenGroups => IsActive && HasGroups && !HasSchedule && !IsBusy;
+
     public bool CanStartTournament =>
         IsDraft && _teamsConfirmed && _teamCount >= 1 && _pitchCount >= 1 && !IsBusy;
 
@@ -170,6 +185,7 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         }
 
         ApplySummary(summary);
+        await LoadScheduleStateAsync().ConfigureAwait(true);
         await LoadGroupsAsync().ConfigureAwait(true);
     }
 
@@ -250,6 +266,8 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
             IsBusy = true;
 
             var games = await _repository.GenerateScheduleAsync(_tournamentId).ConfigureAwait(true);
+            HasSchedule = games.Count > 0;
+            StatusMessage = $"Generated {games.Count} games.";
         }
         catch (Exception ex)
         {
@@ -258,6 +276,57 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    public async Task MoveTeamBetweenGroupsAsync(Guid teamId, Guid sourceGroupId, Guid targetGroupId)
+    {
+        if (IsBusy || _tournamentId == Guid.Empty || !CanMoveTeamsBetweenGroups)
+        {
+            return;
+        }
+
+        if (sourceGroupId == targetGroupId)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            ErrorMessage = null;
+
+            var groups = await _repository
+                .MoveTeamBetweenGroupsAsync(_tournamentId, teamId, sourceGroupId, targetGroupId)
+                .ConfigureAwait(true);
+
+            UpdateGroups(groups);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task LoadScheduleStateAsync()
+    {
+        if (_tournamentId == Guid.Empty)
+        {
+            return;
+        }
+
+        try
+        {
+            var games = await _repository.GetScheduleAsync(_tournamentId).ConfigureAwait(true);
+            HasSchedule = games.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
         }
     }
 
@@ -308,6 +377,7 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         OnPropertyChanged(nameof(CanStartTournament));
         OnPropertyChanged(nameof(CanGenerateGroups));
         OnPropertyChanged(nameof(CanSchedule));
+        OnPropertyChanged(nameof(CanMoveTeamsBetweenGroups));
         OnPropertyChanged(nameof(ShowStartSection));
         OnPropertyChanged(nameof(ShowGeneratorSection));
         RaiseCommandStates();
@@ -323,6 +393,7 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
 
         HasGroups = groups.Count > 0;
 
+        OnPropertyChanged(nameof(CanMoveTeamsBetweenGroups));
         RaiseScheduleCanExecute();
     }
 
@@ -339,6 +410,7 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
     {
         OnPropertyChanged(nameof(CanStartTournament));
         OnPropertyChanged(nameof(CanGenerateGroups));
+        OnPropertyChanged(nameof(CanMoveTeamsBetweenGroups));
 
         if (StartTournamentCommand is ActionCommand start)
         {

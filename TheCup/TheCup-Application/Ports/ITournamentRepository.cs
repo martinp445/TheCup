@@ -42,6 +42,13 @@ public interface ITournamentRepository
         int minTeamsPerGroup,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<GroupSummary>> MoveTeamBetweenGroupsAsync(
+        Guid tournamentId,
+        Guid teamId,
+        Guid sourceGroupId,
+        Guid targetGroupId,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<GameSummary>> GetScheduleAsync(Guid tournamentId, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<GameSummary>> GenerateScheduleAsync(Guid tournamentId, CancellationToken cancellationToken = default);

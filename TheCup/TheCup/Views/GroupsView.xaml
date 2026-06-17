@@ -7,6 +7,17 @@
              d:DesignHeight="500"
              d:DesignWidth="700">
 
+    <UserControl.Resources>
+        <Style x:Key="DraggableTeamRow" TargetType="Grid">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.CanMoveTeamsBetweenGroups, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                             Value="True">
+                    <Setter Property="Cursor" Value="Hand" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
     <Grid Margin="32,24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -44,6 +55,12 @@
                        Foreground="{StaticResource Brush.TextSecondary}"
                        FontSize="12"
                        Text="{Binding StatusMessage}" />
+                <TextBlock Margin="0,4,0,0"
+                           Foreground="{StaticResource Brush.TextSecondary}"
+                           FontSize="12"
+                           FontStyle="Italic"
+                           Text="{StaticResource Groups_DragDropHint}"
+                           Visibility="{Binding CanMoveTeamsBetweenGroups, Converter={StaticResource BoolToVisibility}}" />
             </StackPanel>
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
@@ -134,7 +151,12 @@
             <ItemsControl ItemsSource="{Binding Groups}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Style="{StaticResource TournamentCardBorder}">
+                        <Border Style="{StaticResource TournamentCardBorder}"
+                                AllowDrop="True"
+                                DragOver="GroupBorder_DragOver"
+                                DragEnter="GroupBorder_DragEnter"
+                                DragLeave="GroupBorder_DragLeave"
+                                Drop="GroupBorder_Drop">
                             <StackPanel>
                                 <Grid>
                                     <TextBlock Text="{Binding Name}"
@@ -150,7 +172,9 @@
                                               ItemsSource="{Binding Teams}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Margin="0,0,0,6">
+                                            <Grid Margin="0,0,0,6"
+                                                  Style="{StaticResource DraggableTeamRow}"
+                                                  PreviewMouseLeftButtonDown="Team_PreviewMouseLeftButtonDown">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />
