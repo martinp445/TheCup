@@ -358,6 +358,7 @@ public sealed class MainWindowViewModel : ViewModel
         TeamsViewModel teams => teams,
         PitchesViewModel pitches => pitches,
         GroupsViewModel groups => groups,
+        GamesViewModel games => games,
         _ => null
     };
 

@@ -39,10 +39,6 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
             () => _ = GenerateGroupsAsync(),
             () => !IsBusy && CanGenerateGroups);
 
-        ScheduleCommand = new ActionCommand(
-            () => _ = ScheduleAsync(),
-            () => !IsBusy && CanSchedule);
-
         RefreshCommand = new ActionCommand(
             () => _ = LoadAsync(),
             () => !IsBusy && _tournamentId != Guid.Empty);
@@ -159,8 +155,6 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         IsActive && _teamCount >= 1 && GroupCount >= 1 && TeamsPerGroup >= MinTeamsPerGroup
         && MinTeamsPerGroup >= 1 && !IsBusy;
 
-    public bool CanSchedule => IsActive && HasGroups;
-
     public bool ShowStartSection => IsDraft;
 
     public bool ShowGeneratorSection => IsActive;
@@ -168,8 +162,6 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
     public ICommand StartTournamentCommand { get; }
 
     public ICommand GenerateGroupsCommand { get; }
-
-    public ICommand ScheduleCommand { get; }
 
     public ICommand RefreshCommand { get; }
 
@@ -243,31 +235,6 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
 
             UpdateGroups(groups);
             StatusMessage = $"Generated {groups.Count} groups from {_teamCount} teams.";
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = ex.Message;
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-
-    private async Task ScheduleAsync()
-    {
-        if (IsBusy || _tournamentId == Guid.Empty || !CanSchedule)
-        {
-            return;
-        }
-
-        try
-        {
-            IsBusy = true;
-
-            var games = await _repository.GenerateScheduleAsync(_tournamentId).ConfigureAwait(true);
-            HasSchedule = games.Count > 0;
-            StatusMessage = $"Generated {games.Count} games.";
         }
         catch (Exception ex)
         {
@@ -376,7 +343,6 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         OnPropertyChanged(nameof(IsActive));
         OnPropertyChanged(nameof(CanStartTournament));
         OnPropertyChanged(nameof(CanGenerateGroups));
-        OnPropertyChanged(nameof(CanSchedule));
         OnPropertyChanged(nameof(CanMoveTeamsBetweenGroups));
         OnPropertyChanged(nameof(ShowStartSection));
         OnPropertyChanged(nameof(ShowGeneratorSection));
@@ -394,7 +360,6 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         HasGroups = groups.Count > 0;
 
         OnPropertyChanged(nameof(CanMoveTeamsBetweenGroups));
-        RaiseScheduleCanExecute();
     }
 
     private void RaiseGenerateCanExecute()
@@ -418,20 +383,10 @@ public sealed class GroupsViewModel : ViewModel, IHasStatusMessage
         }
 
         RaiseGenerateCanExecute();
-        RaiseScheduleCanExecute();
 
         if (RefreshCommand is ActionCommand refresh)
         {
             refresh.RaiseCanExecuteChanged();
-        }
-    }
-
-    private void RaiseScheduleCanExecute()
-    {
-        OnPropertyChanged(nameof(CanSchedule));
-        if (ScheduleCommand is ActionCommand schedule)
-        {
-            schedule.RaiseCanExecuteChanged();
         }
     }
 }

@@ -398,7 +398,10 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         return Task.FromResult(ToGameSummaries(tournament));
     }
 
-    public Task<IReadOnlyList<GameSummary>> GenerateScheduleAsync(Guid tournamentId, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<GameSummary>> GenerateScheduleAsync(
+        Guid tournamentId,
+        ScheduleType scheduleType,
+        CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var tournament = FindTournament(tournamentId)
@@ -411,8 +414,14 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         {
             throw new InvalidOperationException("Generate groups before generating the schedule.");
         }
+        if (tournament.Schedule.Count > 0)
+        {
+            throw new InvalidOperationException("A schedule has already been generated.");
+        }
 
-        foreach (var game in GameScheduler.GenerateSchedule(tournament))
+        ScheduleTypeCatalog.EnsureAvailable(scheduleType, tournament.Groups.Count, tournament.Pitches.Count);
+
+        foreach (var game in GameScheduler.GenerateSchedule(tournament, scheduleType))
         {
             tournament.Schedule.Add(game);
         }
@@ -545,6 +554,7 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         Status = tournament.Status,
         PitchCount = tournament.Pitches.Count,
         TeamCount = tournament.Teams.Count,
+        GroupCount = tournament.Groups.Count,
         HasGroups = tournament.Groups.Count > 0,
         TeamsConfirmed = tournament.TeamsConfirmed
     };

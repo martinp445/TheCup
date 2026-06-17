@@ -24,6 +24,8 @@ public sealed class TournamentSummary
 
     public int TeamCount { get; init; }
 
+    public int GroupCount { get; init; }
+
     public bool HasGroups { get; init; }
 
     public bool TeamsConfirmed { get; init; }

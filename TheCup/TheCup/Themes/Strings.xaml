@@ -69,11 +69,14 @@
     <system:String x:Key="Groups_MinTeamsLabel">Minimum teams per group</system:String>
     <system:String x:Key="Groups_GenerateDraw">Shuffle</system:String>
     <system:String x:Key="Groups_Refresh">Refresh</system:String>
-    <system:String x:Key="Groups_Schedule">Schedule</system:String>
     <system:String x:Key="Groups_DragDropHint">Drag teams between groups to adjust the draw before scheduling.</system:String>
 
     <system:String x:Key="Games_Title">Games</system:String>
-    <system:String x:Key="Games_Subtitle">Games schedule.</system:String>
+    <system:String x:Key="Games_Subtitle">Generate and manage the tournament schedule.</system:String>
+    <system:String x:Key="Games_ScheduleGeneratorTitle">Generate schedule</system:String>
+    <system:String x:Key="Games_ScheduleGeneratorMessage">Choose how matches are assigned to pitches. Round robin (group per pitch) is available only when the number of groups equals the number of pitches.</system:String>
+    <system:String x:Key="Games_ScheduleTypeLabel">Schedule type</system:String>
+    <system:String x:Key="Games_GenerateSchedule">Generate schedule</system:String>
     <system:String x:Key="Games_StartGame">Start</system:String>
     <system:String x:Key="Games_FinishGame">Finish</system:String>
     <system:String x:Key="Games_Scheduled">Scheduled</system:String>

@@ -15,14 +15,11 @@
     <Grid Margin="32,24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
+            <StackPanel>
                 <TextBlock Style="{StaticResource SectionTitle}"
                Text="{StaticResource Games_Title}" />
                 <TextBlock Style="{StaticResource SectionSubtitle}"
@@ -49,7 +46,41 @@
             </StackPanel>
         </Grid>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <Border Grid.Row="1"
+                Margin="0,16,0,16"
+                Style="{StaticResource TournamentCardBorder}"
+                Padding="16"
+                Visibility="{Binding ShowScheduleGenerator, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel>
+                <TextBlock Style="{StaticResource SectionTitle}"
+                           FontSize="18"
+                           Text="{StaticResource Games_ScheduleGeneratorTitle}" />
+                <TextBlock Margin="0,6,0,16"
+                           Style="{StaticResource SectionSubtitle}"
+                           Text="{StaticResource Games_ScheduleGeneratorMessage}" />
+
+                <TextBlock Style="{StaticResource FieldLabel}"
+                           Text="{StaticResource Games_ScheduleTypeLabel}" />
+                <ComboBox Style="{StaticResource DarkComboBox}"
+                          ItemsSource="{Binding ScheduleTypeOptions}"
+                          SelectedItem="{Binding SelectedScheduleType}"
+                          DisplayMemberPath="DisplayName">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="ComboBoxItem" BasedOn="{StaticResource DarkComboBoxItem}">
+                            <Setter Property="IsEnabled" Value="{Binding IsAvailable}" />
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
+
+                <Button Margin="0,20,0,0"
+                        HorizontalAlignment="Left"
+                        Style="{StaticResource PrimaryButton}"
+                        Content="{StaticResource Games_GenerateSchedule}"
+                        Command="{Binding GenerateScheduleCommand}" />
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Games}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
