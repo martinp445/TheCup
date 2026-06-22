@@ -1,0 +1,87 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    
+    <system:String x:Key="App_Title">The Cup</system:String>
+    <system:String x:Key="Nav_Overview">Přehled</system:String>
+    <system:String x:Key="Nav_Teams">Týmy</system:String>
+    <system:String x:Key="Nav_Pitches">Hřiště</system:String>
+    <system:String x:Key="Nav_Groups">Skupiny</system:String>
+    <system:String x:Key="Nav_Matches">Zápasy</system:String>
+    <system:String x:Key="Nav_Playoffs">Playoff</system:String>
+    <system:String x:Key="Nav_DisabledTooltip">Dostupné po vytvoření turnaje</system:String>
+    <system:String x:Key="Nav_DisabledGroupsTooltip">Potvrďte týmy, abyste odblokovali Skupiny</system:String>
+
+    <system:String x:Key="Home_Title">Turnaje</system:String>
+    <system:String x:Key="Home_Subtitle">Vytvořte a spravujte své turnaje</system:String>
+    <system:String x:Key="Home_NewTournament">Nový turnaj</system:String>
+    <system:String x:Key="Home_EmptyTitle">Žádné turnaje</system:String>
+    <system:String x:Key="Home_EmptyMessage">Začni vytvořením první turnaje a spravuj tymy skupiny a zápasy.</system:String>
+    <system:String x:Key="Home_Refresh">Refresh</system:String>
+    <system:String x:Key="Home_OpenTournament">Otevřít</system:String>
+    <system:String x:Key="Home_SaveTournament">Uložit</system:String>
+    <system:String x:Key="Home_DeleteTournament">Smazat</system:String>
+
+    <system:String x:Key="Create_Title">Nový turnaj</system:String>
+    <system:String x:Key="Create_Subtitle">Nastavte název turnaje a sport</system:String>
+    <system:String x:Key="Create_NameLabel">Název turnaje</system:String>
+    <system:String x:Key="Create_SportLabel">Sport</system:String>
+    <system:String x:Key="Create_Create">Vytvořit turnaj</system:String>
+    <system:String x:Key="Create_Cancel">Zrušit</system:String>
+
+    <system:String x:Key="Teams_Title">Týmy</system:String>
+    <system:String x:Key="Teams_Subtitle">Přidejte týmy a přejmenujte je kdykoli během turnaje</system:String>
+    <system:String x:Key="Teams_NewTeamLabel">Název týmu</system:String>
+    <system:String x:Key="Teams_AddTeam">Přidat tým</system:String>
+    <system:String x:Key="Teams_Rename">Uložit název</system:String>
+    <system:String x:Key="Teams_Remove">Odstranit</system:String>
+    <system:String x:Key="Teams_EmptyTitle">Žádné tým</system:String>
+    <system:String x:Key="Teams_EmptyMessage">Přidejte týmy, které se zúčastní tohoto turnaje. Můžete přejmenovat tým později, pokud bude potřeba.</system:String>
+    <system:String x:Key="Teams_Refresh">Refresh</system:String>
+    <system:String x:Key="Teams_ConfirmTeams">Potvrdit týmy</system:String>
+    <system:String x:Key="Teams_EditTeams">Upravit týmy</system:String>
+    <system:String x:Key="Teams_ConfirmedTitle">Týmy potvrzeny</system:String>
+    <system:String x:Key="Teams_ConfirmedMessage">Skupiny jsou nyní dostupné v menu. Nastavte hřiště a otevřete Skupiny pro spuštění turnaje a losování skupin.</system:String>
+
+    <system:String x:Key="Pitches_Title">Hřiště</system:String>
+    <system:String x:Key="Pitches_Subtitle">Přidejte hřiště, kde se mohou konat zápasy. Každý turnaj potřebuje alespoň jedno.</system:String>
+    <system:String x:Key="Pitches_MinimumHint">Je vyžadováno alespoň jedno hřiště. Poslední hřiště nelze odstranit.</system:String>
+    <system:String x:Key="Pitches_NewPitchLabel">Název hřiště</system:String>
+    <system:String x:Key="Pitches_AddPitch">Přidat hřiště</system:String>
+    <system:String x:Key="Pitches_Rename">Uložit název</system:String>
+    <system:String x:Key="Pitches_Remove">Odstranit</system:String>
+    <system:String x:Key="Pitches_Refresh">Refresh</system:String>
+
+    <system:String x:Key="Groups_Title">Skupiny</system:String>
+    <system:String x:Key="Groups_Subtitle">Začněte turnaj, poté vygenerujte skupiny</system:String>
+    <system:String x:Key="Groups_StartTitle">Začít turnaj</system:String>
+    <system:String x:Key="Groups_StartMessage">Nejprve potvrďte týmy, ujistěte se, že je nastaveno alespoň jedno hřiště, a poté spusťte turnaj pro spuštění losování skupin.</system:String>
+    <system:String x:Key="Groups_StartTournament">Aktivovat turnaj</system:String>
+    <system:String x:Key="Tournament_Activate">Aktivovat turnaj</system:String>
+    <system:String x:Key="Tournament_ActivateTitle">Aktivovat turnaj</system:String>
+    <system:String x:Key="Tournament_StatusLabel">Status</system:String>
+    <system:String x:Key="Tournament_ActiveBanner">Turnaj je aktivní</system:String>
+    <system:String x:Key="Groups_GeneratorTitle">Losování skupin</system:String>
+    <system:String x:Key="Groups_GeneratorMessage">Nastavte počet skupin, cílové týmy na skupinu a minimum, když týmy nelze rovnoměrně rozdělit. Týmy jsou přiřazeny náhodně.</system:String>
+    <system:String x:Key="Groups_GroupCountLabel">Počet skupin</system:String>
+    <system:String x:Key="Groups_TeamsPerGroupLabel">Týmy na skupinu</system:String>
+    <system:String x:Key="Groups_MinTeamsLabel">Minimum týmů na skupinu</system:String>
+    <system:String x:Key="Groups_GenerateDraw">Losování</system:String>
+    <system:String x:Key="Groups_Refresh">Refresh</system:String>
+    <system:String x:Key="Groups_DragDropHint">Drag teams between groups to adjust the draw before scheduling.</system:String>
+
+    <system:String x:Key="Games_Title">Zápasy</system:String>
+    <system:String x:Key="Games_Subtitle">Generuj a spravuj rozpis turnaje.</system:String>
+    <system:String x:Key="Games_ScheduleGeneratorTitle">Rozpis</system:String>
+    <system:String x:Key="Games_ScheduleGeneratorMessage">Choose how matches are assigned to pitches. Round robin (group per pitch) is available only when the number of groups equals the number of pitches.</system:String>
+    <system:String x:Key="Games_ScheduleTypeLabel">Typ rozpisu</system:String>
+    <system:String x:Key="Games_GenerateSchedule">Rozpis</system:String>
+    <system:String x:Key="Games_ExportPdf">Export PDF</system:String>
+    <system:String x:Key="Games_StartGame">Začít</system:String>
+    <system:String x:Key="Games_FinishGame">Ukončit</system:String>
+    <system:String x:Key="Games_Scheduled">Naplánováno</system:String>
+    <system:String x:Key="Games_Ongoing">Probíhá</system:String>
+    <system:String x:Key="Games_Finished">Dokončeno</system:String>
+
+    <system:String x:Key="Header_ActiveTournament">Aktivní turnaj</system:String>
+</ResourceDictionary>
