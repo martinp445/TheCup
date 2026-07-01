@@ -97,7 +97,7 @@
                                  IsEnabled="{Binding IsGamesNavEnabled}"
                                  ToolTip="{StaticResource Nav_DisabledTooltip}" />
                     <ListBoxItem Content="{StaticResource Nav_Playoffs}"
-                                 IsEnabled="False"
+                                 IsEnabled="{Binding IsPlayoffNavEnabled}"
                                  ToolTip="{StaticResource Nav_DisabledTooltip}" />
                 </ListBox>
             </Border>

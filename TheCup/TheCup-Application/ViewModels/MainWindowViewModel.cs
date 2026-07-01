@@ -14,6 +14,7 @@ public sealed class MainWindowViewModel : ViewModel
     private const int NavPitches = 2;
     private const int NavGroups = 3;
     private const int NavMatches = 4;
+    private const int NavPlayoff = 5;
 
     private readonly ITournamentRepository _repository;
     private readonly IDialogService _dialogService;
@@ -41,6 +42,7 @@ public sealed class MainWindowViewModel : ViewModel
         Pitches = new PitchesViewModel(repository);
         Groups = new GroupsViewModel(repository);
         Games = new GamesViewModel(repository, fileSaveDialog, gameSchedulePdfExporter, _dialogService);
+        Playoff = new PlayoffViewModel(repository);
 
         Home.NewTournamentRequested += ShowCreateTournament;
         Home.OpenTournamentRequested += summary => _ = ShowTeamsAsync(summary);
@@ -69,6 +71,8 @@ public sealed class MainWindowViewModel : ViewModel
     public GroupsViewModel Groups { get; }
 
     public GamesViewModel Games { get; }
+
+    public PlayoffViewModel Playoff { get; }
 
     public ViewModel? CurrentContent
     {
@@ -100,6 +104,7 @@ public sealed class MainWindowViewModel : ViewModel
                 OnPropertyChanged(nameof(IsTournamentNavEnabled));
                 OnPropertyChanged(nameof(IsGroupsNavEnabled));
                 OnPropertyChanged(nameof(IsGamesNavEnabled));
+                OnPropertyChanged(nameof(IsPlayoffNavEnabled));
             }
         }
     }
@@ -120,6 +125,9 @@ public sealed class MainWindowViewModel : ViewModel
         HasActiveTournament && _activeTournamentStatus == TournamentStatus.Active;
 
     public bool IsGamesNavEnabled =>
+        HasActiveTournament && _activeTournamentStatus == TournamentStatus.Active;
+
+    public bool IsPlayoffNavEnabled =>
         HasActiveTournament && _activeTournamentStatus == TournamentStatus.Active;
 
     public int SelectedNavIndex
@@ -264,6 +272,14 @@ public sealed class MainWindowViewModel : ViewModel
         {
             await groups.LoadAsync(summary.Id).ConfigureAwait(true);
         }
+        else if (CurrentContent is GamesViewModel games)
+        {
+            await games.LoadAsync(summary.Id).ConfigureAwait(true);
+        }
+        else if (CurrentContent is PlayoffViewModel playoff)
+        {
+            await playoff.LoadAsync(summary.Id).ConfigureAwait(true);
+        }
     }
 
     private void OnTournamentDeleted(Guid tournamentId)
@@ -284,6 +300,7 @@ public sealed class MainWindowViewModel : ViewModel
         HasActiveTournament = true;
         OnPropertyChanged(nameof(IsGroupsNavEnabled));
         OnPropertyChanged(nameof(IsGamesNavEnabled));
+        OnPropertyChanged(nameof(IsPlayoffNavEnabled));
     }
 
     private void OnTeamsConfirmationChanged(TournamentSummary summary)
@@ -330,9 +347,32 @@ public sealed class MainWindowViewModel : ViewModel
             case NavMatches when IsGamesNavEnabled:
                 _ = ShowGamesAsync();
                 break;
+            case NavPlayoff when IsPlayoffNavEnabled:
+                _ = ShowPlayoffAsync();
+                break;
             default:
                 SetNavIndexSilently(GetNavIndexForContent(CurrentContent));
                 break;
+        }
+    }
+
+    private async Task ShowPlayoffAsync(TournamentSummary summary)
+    {
+        SetActiveTournament(summary);
+        SetCurrentContent(Playoff);
+        SetNavIndexSilently(NavPlayoff);
+        await Playoff.LoadAsync(summary.Id).ConfigureAwait(true);
+    }
+
+    private async Task ShowPlayoffAsync()
+    {
+        if (_activeTournamentId is Guid tournamentId)
+        {
+            var summary = await _repository.GetByIdAsync(tournamentId).ConfigureAwait(true);
+            if (summary is not null)
+            {
+                await ShowPlayoffAsync(summary).ConfigureAwait(true);
+            }
         }
     }
 
@@ -342,6 +382,7 @@ public sealed class MainWindowViewModel : ViewModel
         PitchesViewModel => NavPitches,
         GroupsViewModel => NavGroups,
         GamesViewModel => NavMatches,
+        PlayoffViewModel => NavPlayoff,
         _ => NavOverview
     };
 
@@ -360,6 +401,7 @@ public sealed class MainWindowViewModel : ViewModel
         PitchesViewModel pitches => pitches,
         GroupsViewModel groups => groups,
         GamesViewModel games => games,
+        PlayoffViewModel playoff => playoff,
         _ => null
     };
 
