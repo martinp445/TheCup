@@ -15,6 +15,7 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
     private readonly ITournamentRepository _repository;
     private readonly IFileSaveDialogService _fileSaveDialog;
     private readonly IGameSchedulePdfExporter _pdfExporter;
+    private readonly IDialogService _dialogService;
     private Guid _tournamentId;
     private string _tournamentName = string.Empty;
     private TournamentStatus _status = TournamentStatus.Draft;
@@ -31,11 +32,13 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
     public GamesViewModel(
         ITournamentRepository repository,
         IFileSaveDialogService fileSaveDialog,
-        IGameSchedulePdfExporter pdfExporter)
+        IGameSchedulePdfExporter pdfExporter,
+        IDialogService dialogService)
     {
         _repository = repository;
         _fileSaveDialog = fileSaveDialog;
         _pdfExporter = pdfExporter;
+        _dialogService = dialogService;
         Games = new ObservableCollection<GameSummary>();
         ScheduleTypeOptions = new ObservableCollection<ScheduleTypeOption>();
 
@@ -54,6 +57,14 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
         ExportToPdfCommand = new ActionCommand(
             () => _ = ExportToPdfAsync(),
             () => !IsBusy && CanExportToPdf);
+
+        DeleteScheduleCommand = new ActionCommand(
+            async () => await DeleteScheduleAsync(),
+            () => !IsBusy && HasSchedule);
+
+        ManualScheduleCommand = new ActionCommand(
+            () => _ = OpenManualScheduleDialogAsync(),
+            () => !IsBusy && CanGenerateSchedule);
     }
 
     public ObservableCollection<GameSummary> Games { get; }
@@ -156,6 +167,10 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
 
     public ICommand ExportToPdfCommand { get; }
 
+    public ICommand DeleteScheduleCommand { get; }
+
+    public ICommand ManualScheduleCommand { get; }
+
     public async Task LoadAsync(Guid tournamentId)
     {
         _tournamentId = tournamentId;
@@ -234,6 +249,39 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
         }
     }
 
+    private async Task DeleteScheduleAsync()
+    {
+        if (IsBusy || _tournamentId == Guid.Empty || !HasSchedule)
+        {
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+            ErrorMessage = null;
+
+            await _repository
+                .DeleteScheduleAsync(_tournamentId)
+                .ConfigureAwait(true);
+
+            HasSchedule = false;
+            Games.Clear();
+            
+            StatusMessage = "Games was deleted.";
+            OnPropertyChanged(nameof(Games));
+            RaiseExportCanExecute();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     private async Task ExportToPdfAsync()
     {
         if (IsBusy || !CanExportToPdf)
@@ -272,6 +320,28 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
         catch (Exception ex)
         {
             ErrorMessage = $"Failed to export PDF: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task OpenManualScheduleDialogAsync()
+    {
+        if (IsBusy || _tournamentId == Guid.Empty)
+        {
+            return;
+        }
+
+        try
+        {
+            var manualScheduleViewModel = new ManualScheduleViewModel(_repository, _tournamentId);
+            _dialogService.ShowDialog(manualScheduleViewModel);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to open manual schedule dialog: {ex.Message}";
         }
         finally
         {
@@ -375,6 +445,11 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
         {
             finish.RaiseCanExecuteChanged();
         }
+
+        if (DeleteScheduleCommand is ActionCommand delete)
+        {
+            delete.RaiseCanExecuteChanged();
+        }
     }
 
     private void RaiseGenerateScheduleCanExecute()
@@ -384,6 +459,11 @@ public class GamesViewModel : ViewModel, IHasStatusMessage
         if (GenerateScheduleCommand is ActionCommand generate)
         {
             generate.RaiseCanExecuteChanged();
+        }
+
+        if (ManualScheduleCommand is ActionCommand manual)
+        {
+            manual.RaiseCanExecuteChanged();
         }
     }
 

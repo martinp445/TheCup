@@ -16,6 +16,7 @@ public sealed class MainWindowViewModel : ViewModel
     private const int NavMatches = 4;
 
     private readonly ITournamentRepository _repository;
+    private readonly IDialogService _dialogService;
     private ViewModel? _currentContent;
     private Guid? _activeTournamentId;
     private string? _activeTournamentName;
@@ -25,27 +26,21 @@ public sealed class MainWindowViewModel : ViewModel
     private int _selectedNavIndex;
     private bool _suppressNavChange;
 
-    public MainWindowViewModel()
-        : this(
-            new InMemoryTournamentRepository(new TournamentPersistenceService()),
-            new NullFileSaveDialogService(),
-            new GameSchedulePdfExporter())
-    {
-    }
-
     public MainWindowViewModel(
         ITournamentRepository repository,
         IFileSaveDialogService fileSaveDialog,
-        IGameSchedulePdfExporter gameSchedulePdfExporter)
+        IGameSchedulePdfExporter gameSchedulePdfExporter,
+        IDialogService dialogService)
     {
         _repository = repository;
+        _dialogService = dialogService;
 
         Home = new TournamentHomeViewModel(repository);
         CreateTournament = new CreateTournamentViewModel(repository);
         Teams = new TeamsViewModel(repository);
         Pitches = new PitchesViewModel(repository);
         Groups = new GroupsViewModel(repository);
-        Games = new GamesViewModel(repository, fileSaveDialog, gameSchedulePdfExporter);
+        Games = new GamesViewModel(repository, fileSaveDialog, gameSchedulePdfExporter, _dialogService);
 
         Home.NewTournamentRequested += ShowCreateTournament;
         Home.OpenTournamentRequested += summary => _ = ShowTeamsAsync(summary);

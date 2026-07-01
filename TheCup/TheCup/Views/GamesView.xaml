@@ -48,12 +48,25 @@
                FontSize="12"
                Text="{Binding StatusMessage}" />
             </StackPanel>
-            <Button Grid.Column="1"
-                    VerticalAlignment="Top"
-                    Style="{StaticResource SecondaryButton}"
-                    Content="{StaticResource Games_ExportPdf}"
-                    Command="{Binding ExportToPdfCommand}"
-                    Visibility="{Binding HasSchedule, Converter={StaticResource BoolToVisibility}}" />
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal">
+                <Button VerticalAlignment="Top"
+                        Margin="0,0,4,0"
+                        Style="{StaticResource PrimaryButton}"
+                        Content="Manual"
+                        Command="{Binding ManualScheduleCommand}" />
+                <Button VerticalAlignment="Top"
+                        Margin="0,0,4,0"
+                        Style="{StaticResource SecondaryButton}"
+                        Content="Smazat Rozpis"
+                        Command="{Binding DeleteScheduleCommand}"
+                        Visibility="{Binding HasSchedule, Converter={StaticResource BoolToVisibility}}" />
+                <Button VerticalAlignment="Top"
+                        Style="{StaticResource SecondaryButton}"
+                        Content="{StaticResource Games_ExportPdf}"
+                        Command="{Binding ExportToPdfCommand}"
+                        Visibility="{Binding HasSchedule, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
         </Grid>
 
         <Border Grid.Row="1"
@@ -82,11 +95,14 @@
                     </ComboBox.ItemContainerStyle>
                 </ComboBox>
 
-                <Button Margin="0,20,0,0"
-                        HorizontalAlignment="Left"
-                        Style="{StaticResource PrimaryButton}"
-                        Content="{StaticResource Games_GenerateSchedule}"
-                        Command="{Binding GenerateScheduleCommand}" />
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,20,0,0">
+                    <Button HorizontalAlignment="Left"
+                            Margin="0,0,4,0"
+                            Style="{StaticResource PrimaryButton}"
+                            Content="{StaticResource Games_GenerateSchedule}"
+                            Command="{Binding GenerateScheduleCommand}" />
+                </StackPanel>
             </StackPanel>
         </Border>
 

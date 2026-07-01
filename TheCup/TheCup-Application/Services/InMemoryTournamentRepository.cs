@@ -429,6 +429,18 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         return Task.FromResult(ToGameSummaries(tournament));
     }
 
+    public Task DeleteScheduleAsync(
+        Guid tournamentId,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var tournament = FindTournament(tournamentId) ?? throw new InvalidOperationException("Tournament was not found.");
+
+        tournament.Schedule.Clear();
+
+        return Task.CompletedTask;
+    }
+
     public Task<GameStatus> StartGameAsync(Guid tournamentId, Guid gameId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -532,6 +544,24 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         }
 
         return _persistenceService.SaveTournamentAsync(tournament, cancellationToken);
+    }
+
+    public void AddGame(Guid tournamentId, string teamA, string teamB, string pitch, int round)
+    {
+        var tournament = FindTournament(tournamentId)
+            ?? throw new InvalidOperationException("Tournament was not found.");
+
+        var homeTeam = tournament.Teams.FirstOrDefault(t => t.Name.ToLower() == teamA) ?? throw new InvalidOperationException($"Team '{teamA}' was not found.");
+        var awayTeam = tournament.Teams.FirstOrDefault(t => t.Name.ToLower() == teamB) ?? throw new InvalidOperationException($"Team '{teamB}' was not found.");
+        var gamePitch = tournament.Pitches.FirstOrDefault(p => p.Name.ToLower() == pitch) ?? throw new InvalidOperationException($"Pitch '{pitch}' was not found.");
+
+        tournament.Schedule.Add(new Game
+        {
+            Id = Guid.NewGuid(),
+            Name = $"Round {round}",
+            PitchId = gamePitch.Id,
+            Teams = (homeTeam.Id, awayTeam.Id)
+        });
     }
 
     private Tournament? FindTournament(Guid tournamentId)
@@ -674,4 +704,5 @@ public sealed class InMemoryTournamentRepository : ITournamentRepository
         Id = pitch.Id,
         Name = pitch.Name
     };
+
 }

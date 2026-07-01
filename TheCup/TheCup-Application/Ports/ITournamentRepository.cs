@@ -56,6 +56,10 @@ public interface ITournamentRepository
         ScheduleType scheduleType,
         CancellationToken cancellationToken = default);
 
+    Task DeleteScheduleAsync(
+        Guid tournamentId,
+        CancellationToken cancellationToken = default);
+
     Task<GameStatus> StartGameAsync(Guid tournamentId, Guid gameId, CancellationToken cancellationToken = default);
 
     Task<GameStatus> FinishGameAsync(Guid tournamentId, Guid gameId, int homeTeamScore, int awayTeamScore, CancellationToken cancellationToken = default);
@@ -63,4 +67,6 @@ public interface ITournamentRepository
     Task DeleteAsync(Guid tournamentId, CancellationToken cancellationToken = default);
 
     Task SaveAsync(Guid tournamentId, CancellationToken cancellationToken = default);
+
+    void AddGame(Guid tournamentId, string teamA, string teamB, string pitch, int round);
 }
